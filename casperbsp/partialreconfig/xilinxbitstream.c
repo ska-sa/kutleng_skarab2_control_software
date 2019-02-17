@@ -82,14 +82,14 @@
 
 void SendPRData(int clientsocket, struct sockaddr_in serveraddr,uint8_t *packet,int length)
 {
-//	int rlength;
-//	char ibuffer[400];
+	int rlength;
+	static char ibuffer[40];
 	sendto(clientsocket, (const char *)packet, length,
 	MSG_CONFIRM, (const struct sockaddr *) &serveraddr, 
 	sizeof(serveraddr));
 
-//	recvfrom(clientsocket, (char *)ibuffer,length,
-//	MSG_WAITALL, (struct sockaddr *) &serveraddr,&rlength);
+	recvfrom(clientsocket, (char *)ibuffer,10,
+	MSG_WAITALL, (struct sockaddr *) &serveraddr,&rlength);
 }
 
 
@@ -160,10 +160,10 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 			/*Pack the remaining 97 DWORDs */
 			for(i = 0;i<97;i++)
 			{
-				PRFramePacket[(i+1)*6] 	   = (uint8_t)(0x000000FF&FrameDword[i]);
-				PRFramePacket[((i+1)*6)+1] = (uint8_t)(0x000000FF&((FrameDword[i])>>8));
-				PRFramePacket[((i+1)*6)+2] = (uint8_t)(0x000000FF&((FrameDword[i])>>16));
-				PRFramePacket[((i+1)*6)+3] = (uint8_t)(0x000000FF&((FrameDword[i])>>24));
+				PRFramePacket[((i+1)*6)+3] = (uint8_t)(0x000000FF&FrameDword[i]);
+				PRFramePacket[((i+1)*6)+2] = (uint8_t)(0x000000FF&((FrameDword[i])>>8));
+				PRFramePacket[((i+1)*6)+1] = (uint8_t)(0x000000FF&((FrameDword[i])>>16));
+				PRFramePacket[((i+1)*6)+0] = (uint8_t)(0x000000FF&((FrameDword[i])>>24));
 			}
 			/*Send the data over UDP.*/
 			SendPRData(clientSocket,serverAddr,PRFramePacket,398);
@@ -177,11 +177,12 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 			PRDwordPacket[3] = (uint8_t)(0x000000FF&(SequenceCount>>16));
 			PRDwordPacket[4] = (uint8_t)(0x000000FF&(SequenceCount>>8));
 			PRDwordPacket[5] = (uint8_t)(0x000000FF&(SequenceCount));
-			PRDwordPacket[6] = (uint8_t)(0x000000FF&FileDWORD);
-			PRDwordPacket[7] = (uint8_t)(0x000000FF&(FileDWORD>>8));
-			PRDwordPacket[8] = (uint8_t)(0x000000FF&(FileDWORD>>16));
-			PRDwordPacket[9] = (uint8_t)(0x000000FF&(FileDWORD>>24));
-		    /*Sedn the data over UDP.*/
+			//Start of DWORD 
+			PRDwordPacket[9] = (uint8_t)(0x000000FF&FileDWORD);
+			PRDwordPacket[8] = (uint8_t)(0x000000FF&(FileDWORD>>8));
+			PRDwordPacket[7] = (uint8_t)(0x000000FF&(FileDWORD>>16));
+			PRDwordPacket[6] = (uint8_t)(0x000000FF&(FileDWORD>>24));
+		    /*Send the data over UDP.*/
 			SendPRData(clientSocket,serverAddr,PRDwordPacket,10);
 		}
 		/*Point to next sequence*/
