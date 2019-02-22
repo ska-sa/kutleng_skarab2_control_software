@@ -68,28 +68,32 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
- 
 
-#define MAXLINE 2048
-#define MAXSEND 1500-64
 
 #define FRAME_WRITE 0xA5
 #define DWORD_WRITE 0xDA
+#define DWORD_READ  0xDE
 
 /*Data goes out in MSD first according to network byte ordering rules. */
 #define C_PR_FRAME_START  0x5D400030
 
 
-void SendPRData(int clientsocket, struct sockaddr_in serveraddr,uint8_t *packet,int length)
+uint32_t SendPRData(int clientsocket, struct sockaddr_in serveraddr,uint8_t *packet,int length)
 {
 	int rlength;
 	static char ibuffer[40];
+    uint32_t rval;
 	sendto(clientsocket, (const char *)packet, length,
-	MSG_CONFIRM, (const struct sockaddr *) &serveraddr, 
+	MSG_CONFIRM, (const struct sockaddr *) &serveraddr,
 	sizeof(serveraddr));
 
 	recvfrom(clientsocket, (char *)ibuffer,10,
 	MSG_WAITALL, (struct sockaddr *) &serveraddr,&rlength);
+    rval = ((((ibuffer[6])&0x000000FF)<<24)&0xFF000000);
+    rval |= ((((ibuffer[7])&0x000000FF)<<16)&0x00FF0000);
+    rval |= ((((ibuffer[8])&0x000000FF)<<8)&0x0000FF00);
+    rval |= ((((ibuffer[9])&0x000000FF))&0x000000FF);
+    return rval;
 }
 
 
@@ -104,6 +108,25 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 	static uint32_t 	FrameDword[98];
 	uint32_t 	FileDWORD = 0;
 	uint32_t 	SequenceCount = 0;
+    uint32_t    iretval;
+    uint32_t    retval;
+    static uint32_t lCommandArray[14] =
+    {
+        0xFFFFFFFF, //Write Dummy word
+        0x000000BB, //Write Bus width sync word
+        0x11220044, //Write Bus width detect
+        0xFFFFFFFF, //Write Dummy word
+        0xAA995566, //Write Sync word
+        0x20000000, //Write NOOP
+        0x2800E001, //Write Type 1 packet header to read STAT register
+        0x20000000, //Write NOOP
+        0x20000000, //Write NOOP
+        0x00000000, //Read  Device writes one word from the STAT register to the configuration interface
+        0x30008001, //Write Type 1 Write 1 word to CMD
+        0x0000000D, //Write DESYNC command
+        0x20000000, //Write NOOP
+        0x20000000  //Write NOOP
+    };
 
 	/*Create UDP socket*/
 	clientSocket = socket(PF_INET, SOCK_DGRAM, 0);
@@ -166,7 +189,7 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 				PRFramePacket[((i+1)*6)+0] = (uint8_t)(0x000000FF&((FrameDword[i])>>24));
 			}
 			/*Send the data over UDP.*/
-			SendPRData(clientSocket,serverAddr,PRFramePacket,398);
+			retval = SendPRData(clientSocket,serverAddr,PRFramePacket,398);
 		}
 		else
 		{
@@ -183,16 +206,53 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 			PRDwordPacket[7] = (uint8_t)(0x000000FF&(FileDWORD>>16));
 			PRDwordPacket[6] = (uint8_t)(0x000000FF&(FileDWORD>>24));
 		    /*Send the data over UDP.*/
-			SendPRData(clientSocket,serverAddr,PRDwordPacket,10);
+			retval = SendPRData(clientSocket,serverAddr,PRDwordPacket,10);
 		}
 		/*Point to next sequence*/
-		SequenceCount = SequenceCount+1;
+		SequenceCount = SequenceCount + 1;
+        /*Test to see if we dont have errors*/
+        if (((retval&0x000000F0)==0x00000050) || ((retval&0x000000F0)==0x00000010))
+        {
+            /*This is an CFGError condition, break and return STAT register*/
+            break;
+        }
     }
-
+    {
+        /*Perform readback of status here*/
+        for(i = 0; i < 14;i++)
+        {
+            FileDWORD = lCommandArray[i];
+            if(FileDWORD != 0)
+            {
+                PRDwordPacket[0] = (uint8_t)DWORD_WRITE;
+            }else
+            {
+                PRDwordPacket[0] = (uint8_t)DWORD_READ;
+            }
+            /* Pack the DWORD. */
+            PRDwordPacket[1] = (uint8_t)0x01;
+            PRDwordPacket[2] = (uint8_t)(0x000000FF&(SequenceCount>>24));
+            PRDwordPacket[3] = (uint8_t)(0x000000FF&(SequenceCount>>16));
+            PRDwordPacket[4] = (uint8_t)(0x000000FF&(SequenceCount>>8));
+            PRDwordPacket[5] = (uint8_t)(0x000000FF&(SequenceCount));
+            //Start of DWORD
+            PRDwordPacket[6] = (uint8_t)(0x000000FF&FileDWORD);
+            PRDwordPacket[7] = (uint8_t)(0x000000FF&(FileDWORD>>8));
+            PRDwordPacket[8] = (uint8_t)(0x000000FF&(FileDWORD>>16));
+            PRDwordPacket[9] = (uint8_t)(0x000000FF&(FileDWORD>>24));
+            /*Send the data over UDP.*/
+            retval = SendPRData(clientSocket,serverAddr,PRDwordPacket,10);
+            if(FileDWORD == 0)
+            {
+                iretval = retval;
+            }
+            SequenceCount = SequenceCount + 1;
+        }
+    }
 	
 	/* Close bitfile after sending all packets using UDP protocol.*/
     fclose(BitFile);
-	return 0;
+	return iretval;
 }
 
 
