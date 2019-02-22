@@ -67,52 +67,48 @@ prloaderlib = CDLL("./libxilinxbitstream.so")
 
 def main():
 	#Send the bitfile over UDP calling the C library function
-	retval = prloaderlib.configurepartialbitfile(20000,"192.168.100.10", "./bitfiles/vcu1525/PartialBlinker_i_partialflasher_partial.bin")
-	print("STAT Register is ="+str(retval))
+	retval = c_int(prloaderlib.configurepartialbitfile(20000,"192.168.100.10", "./bitfiles/vcu1525/PartialBlinker_i_partialblinker_partial.bin"))
+	print("STAT Register is = %08x" % retval.value)
 	#Check the CRC Error bit
-	if retval&0x00000001:
+	if retval.value&0x00000001:
 		print("CRC Error after config")
 	else:
 		print("No CRC Error after config")
 	#Check the EOS bit
-	if retval&0x00000010:
+	if retval.value&0x00000010:
 		print("EOS Status:1 = Finished")
 	else:
 		print("EOS Status:0 = Not finished")
-	print("Mode pins M[2:0]="+str((retval>>8)&0x00000007))
-	print("CFG_STARTUP_PHASE="+str((retval>>18)&0x00000007))
-	print("CFG_BUS_WIDTH="+str((retval>>25)&0x00000003))
-	if retval&0x00000800:
+	print("Mode pins M[2:0]=%0x" %((retval.value>>8)&0x00000007))
+	print("CFG_STARTUP_PHASE="+str((retval.value>>18)&0x00000007))
+	print("CFG_BUS_WIDTH="+str((retval.value>>25)&0x00000003))
+	if retval.value&0x00000800:
 		print("Inititalisation finished")
 	else:
 		print("Initialisation not finished")
-	if retval&0x00001000:
+	if retval.value&0x00001000:
 		print("INIT_B:1 High")
 	else:
 		print("INIT_B:0 Low")
-	if retval&0x00002000:
-		print("INT_DONE:1 High")
+	if retval.value&0x00002000:
+		print("INIT_DONE:1 High")
 	else:
-		print("INT_DONE:0 Low")
-	if retval&0x00004000:
+		print("INIT_DONE:0 Low")
+	if retval.value&0x00004000:
 		print("DONE:1 High")
 	else:
 		print("DONE:0 Low")
-	if retval&0x00008000:
+	if retval.value&0x00008000:
 		print("IDCODE ERROR:1 High")
 	else:
 		print("IDCODE NO ERROR:0 Low")
-	if retval&0x00010000:
+	if retval.value&0x00010000:
 		print("SECURITY ERROR:1 High")
 	else:
 		print("SECURITY NO ERROR:0 Low")
-	if retval&0x00020000:
+	if retval.value&0x00020000:
 		print("Device Over Temperature:1 High")
 	else:
 		print("Device Temperature:0 Ok")
-	if retval&0x0000000:
-		print("SECURITY ERROR:1 High")
-	else:
-		print("SECURITY NO ERROR:0 Low")
 	exit() 
 main() 

@@ -77,11 +77,29 @@
 /*Data goes out in MSD first according to network byte ordering rules. */
 #define C_PR_FRAME_START  0x5D400030
 
+uint32_t lCommandArray[14] =
+    {
+        0xFFFFFFFF, //Write Dummy word
+        0x000000BB, //Write Bus width sync word
+        0x11220044, //Write Bus width detect
+        0xFFFFFFFF, //Write Dummy word
+        0xAA995566, //Write Sync word
+        0x20000000, //Write NOOP
+        0x2800E001, //Write Type 1 packet header to read STAT register
+        0x20000000, //Write NOOP
+        0x20000000, //Write NOOP
+        0x00000000, //Read  Device writes one word from the STAT register to the configuration interface
+        0x30008001, //Write Type 1 Write 1 word to CMD
+        0x0000000D, //Write DESYNC command
+        0x20000000, //Write NOOP
+        0x20000000  //Write NOOP
+    };
+
 
 uint32_t SendPRData(int clientsocket, struct sockaddr_in serveraddr,uint8_t *packet,int length)
 {
 	int rlength;
-	static char ibuffer[40];
+	static char ibuffer[12];
     uint32_t rval;
 	sendto(clientsocket, (const char *)packet, length,
 	MSG_CONFIRM, (const struct sockaddr *) &serveraddr,
@@ -102,7 +120,7 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 	FILE * 		BitFile;
 	struct 		sockaddr_in 	serverAddr;
     ssize_t 	BytesReadSize;
-	int 		clientSocket, portNum,i;
+	int 		clientSocket, portNum,i,j;
 	uint8_t 	PRDwordPacket[10];
 	static uint8_t 	PRFramePacket[398];
 	static uint32_t 	FrameDword[98];
@@ -110,23 +128,6 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 	uint32_t 	SequenceCount = 0;
     uint32_t    iretval;
     uint32_t    retval;
-    static uint32_t lCommandArray[14] =
-    {
-        0xFFFFFFFF, //Write Dummy word
-        0x000000BB, //Write Bus width sync word
-        0x11220044, //Write Bus width detect
-        0xFFFFFFFF, //Write Dummy word
-        0xAA995566, //Write Sync word
-        0x20000000, //Write NOOP
-        0x2800E001, //Write Type 1 packet header to read STAT register
-        0x20000000, //Write NOOP
-        0x20000000, //Write NOOP
-        0x00000000, //Read  Device writes one word from the STAT register to the configuration interface
-        0x30008001, //Write Type 1 Write 1 word to CMD
-        0x0000000D, //Write DESYNC command
-        0x20000000, //Write NOOP
-        0x20000000  //Write NOOP
-    };
 
 	/*Create UDP socket*/
 	clientSocket = socket(PF_INET, SOCK_DGRAM, 0);
@@ -217,6 +218,7 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
             break;
         }
     }
+    for(j = 0; j < 4; j++)
     {
         /*Perform readback of status here*/
         for(i = 0; i < 14;i++)
@@ -242,7 +244,7 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
             PRDwordPacket[9] = (uint8_t)(0x000000FF&(FileDWORD>>24));
             /*Send the data over UDP.*/
             retval = SendPRData(clientSocket,serverAddr,PRDwordPacket,10);
-            if(FileDWORD == 0)
+            if(FileDWORD == 0x30008001)
             {
                 iretval = retval;
             }
