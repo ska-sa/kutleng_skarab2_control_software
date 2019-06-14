@@ -67,6 +67,6 @@ prloaderlib = CDLL("./libxilinxbitstream.so")
 
 def main():
 	#Send the bitfile over UDP calling the C library function
-	prloaderlib.configurepartialbitfile(20000,"192.168.100.10", "./bitfiles/vcu1525/PartialBlinker_i_partialflasher_partial.bin")
+	prloaderlib.configurepartialbitfile(20000,"192.168.100.10", "./bitfiles/vcu118/PartialBlinker_i_partialblinker_partial.bin")
 	exit() 
 main() 

@@ -98,7 +98,7 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 	FILE * 		BitFile;
 	struct 		sockaddr_in 	serverAddr;
     ssize_t 	BytesReadSize;
-	int 		clientSocket, portNum,i;
+	int 		clientSocket,i;
 	uint8_t 	PRDwordPacket[10];
 	static uint8_t 	PRFramePacket[398];
 	static uint32_t 	FrameDword[98];
