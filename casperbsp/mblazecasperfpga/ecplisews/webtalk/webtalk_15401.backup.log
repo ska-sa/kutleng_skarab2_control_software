@@ -1,0 +1,62 @@
+#-----------------------------------------------------------
+# Webtalk v2018.3.1 (64-bit)
+# SW Build 2489853 on Tue Mar 26 04:18:30 MDT 2019
+# 
+# Start of session at: Fri Oct 25 00:14:49 2019
+# Process ID: 15401
+# Current directory: /home/hectorh/Documents/projects/sarao/skarab2/kutlengrepo/kutleng_skarab2_control_software/casperbsp/mblazecasperfpga/ecplisews/webtalk
+# Command line: wbtcv -mode batch -source sdk_webtalk.tcl
+# Log file: /home/hectorh/Documents/projects/sarao/skarab2/kutlengrepo/kutleng_skarab2_control_software/casperbsp/mblazecasperfpga/ecplisews/webtalk/webtalk.log
+# Journal file: /home/hectorh/Documents/projects/sarao/skarab2/kutlengrepo/kutleng_skarab2_control_software/casperbsp/mblazecasperfpga/ecplisews/webtalk/webtalk.jou
+#-----------------------------------------------------------
+source sdk_webtalk.tcl
+# webtalk_init -webtalk_dir /home/hectorh/Documents/projects/sarao/skarab2/kutlengrepo/kutleng_skarab2_control_software/casperbsp/mblazecasperfpga/ecplisews/webtalk
+# webtalk_register_client -client project
+# webtalk_add_data -client project -key date_generated -value "2019-10-25 00:14:48" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key product_version -value "SDK v2018.3" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key build_version -value "2018.3" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key os_platform -value "amd64" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key registration_id -value "210838816_1777524842_210706034_963" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key tool_flow -value "SDK" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key beta -value "false" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key route_design -value "NA" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key target_family -value "NA" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key target_device -value "NA" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key target_package -value "NA" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key target_speed -value "NA" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key random_id -value "6mqsaaifhn2amnkjnrju3o4bng" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key project_id -value "2018.3_2" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key project_iteration -value "2" -context "software_version_and_target_device"
+# webtalk_add_data -client project -key os_name -value "Ubuntu" -context "user_environment"
+# webtalk_add_data -client project -key os_release -value "Ubuntu 18.04.3 LTS" -context "user_environment"
+# webtalk_add_data -client project -key cpu_name -value "Intel(R) Core(TM) i7-6800K CPU @ 3.40GHz" -context "user_environment"
+# webtalk_add_data -client project -key cpu_speed -value "3546.449 MHz" -context "user_environment"
+# webtalk_add_data -client project -key total_processors -value "1" -context "user_environment"
+# webtalk_add_data -client project -key system_ram -value "135.093 GB" -context "user_environment"
+# webtalk_register_client -client sdk
+# webtalk_add_data -client sdk -key uid -value "1571950440000" -context "sdk\\\\bsp/1571950440000"
+# webtalk_add_data -client sdk -key hwid -value "1570021297000" -context "sdk\\\\bsp/1571950440000"
+# webtalk_add_data -client sdk -key os -value "standalone" -context "sdk\\\\bsp/1571950440000"
+# webtalk_add_data -client sdk -key apptemplate -value "hello_world" -context "sdk\\\\bsp/1571950440000"
+# webtalk_add_data -client sdk -key RecordType -value "BSPCreation" -context "sdk\\\\bsp/1571950440000"
+# webtalk_add_data -client sdk -key uid -value "1571950441000" -context "sdk\\\\application/1571950441000"
+# webtalk_add_data -client sdk -key hwid -value "1570021297000" -context "sdk\\\\application/1571950441000"
+# webtalk_add_data -client sdk -key bspid -value "1571950440000" -context "sdk\\\\application/1571950441000"
+# webtalk_add_data -client sdk -key newbsp -value "true" -context "sdk\\\\application/1571950441000"
+# webtalk_add_data -client sdk -key os -value "standalone" -context "sdk\\\\application/1571950441000"
+# webtalk_add_data -client sdk -key apptemplate -value "hello_world" -context "sdk\\\\application/1571950441000"
+# webtalk_add_data -client sdk -key RecordType -value "APPCreation" -context "sdk\\\\application/1571950441000"
+# webtalk_add_data -client sdk -key LangUsed -value "C" -context "sdk\\\\application/1571950441000"
+# webtalk_add_data -client sdk -key Procused -value "microblaze" -context "sdk\\\\application/1571950441000"
+# webtalk_add_data -client sdk -key projSize -value "88.8359375" -context "sdk\\\\application/1571950441000"
+# webtalk_add_data -client sdk -key uid -value "NA" -context "sdk\\\\bsp/1571955288565"
+# webtalk_add_data -client sdk -key RecordType -value "ToolUsage" -context "sdk\\\\bsp/1571955288565"
+# webtalk_add_data -client sdk -key BootgenCount -value "0" -context "sdk\\\\bsp/1571955288565"
+# webtalk_add_data -client sdk -key DebugCount -value "0" -context "sdk\\\\bsp/1571955288565"
+# webtalk_add_data -client sdk -key PerfCount -value "0" -context "sdk\\\\bsp/1571955288565"
+# webtalk_add_data -client sdk -key FlashCount -value "0" -context "sdk\\\\bsp/1571955288565"
+# webtalk_add_data -client sdk -key CrossTriggCount -value "0" -context "sdk\\\\bsp/1571955288565"
+# webtalk_add_data -client sdk -key QemuDebugCount -value "0" -context "sdk\\\\bsp/1571955288565"
+# webtalk_transmit -clientid 80693291 -regid "210838816_1777524842_210706034_963" -xml /home/hectorh/Documents/projects/sarao/skarab2/kutlengrepo/kutleng_skarab2_control_software/casperbsp/mblazecasperfpga/ecplisews/webtalk/usage_statistics_ext_sdk.xml -html /home/hectorh/Documents/projects/sarao/skarab2/kutlengrepo/kutleng_skarab2_control_software/casperbsp/mblazecasperfpga/ecplisews/webtalk/usage_statistics_ext_sdk.html -wdm /home/hectorh/Documents/projects/sarao/skarab2/kutlengrepo/kutleng_skarab2_control_software/casperbsp/mblazecasperfpga/ecplisews/webtalk/sdk_webtalk.wdm -intro "<H3>SDK Usage Report</H3><BR>"
+# webtalk_terminate
+INFO: [Common 17-206] Exiting Webtalk at Fri Oct 25 00:14:49 2019...
