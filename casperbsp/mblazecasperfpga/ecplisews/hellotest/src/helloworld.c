@@ -50,6 +50,7 @@
 #include "platform.h"
 #include "xil_printf.h"
 #include "xil_io.h"
+#include "ethmacdriver_l.h"
 
 int main()
 {
@@ -60,8 +61,33 @@ int main()
     ++xData;
     Xil_Out32(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR,xData);
     xData=1;
-    Xil_Out32(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR+0x28,xData); // Enable the device by setting register 10 bit 0.
+
+    /* Test Enable/Disable API*/
+    /* Enable the device by setting register 10 bit 0. */
+    XGMAC_EnableXGMAC(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
     print("Device is Enabled\n\r");
+    /* Disable the device by setting register 10 bit 0. */
+    XGMAC_DisableXGMAC(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+    print("Device is disabled\n\r");
+    /* End Test Enable/Disable API*/
+
+
+    /* Test Promiscuous mode Enable/Disable API*/
+    /* Enable Promiscuous mode by setting register 10 bit 1.*/
+    XGMAC_EnableXGMACPromiscuousMode(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+    print("Device is Enabled\n\r");
+    /* Disable Promiscuous mode by setting register 10 bit 1.*/
+    XGMAC_DisableXGMACPromiscuousMode(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+    print("Device is disabled\n\r");
+    /* End Test Promiscuous Mode Enable/Disable API*/
+
+
+    /* Test Statistics Reset API*/
+    XGMAC_ResetStatisticsCounters(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+    print("Statistics registers cleared\n\r");
+    /* End Test Statistics Reset  API*/
+
+
     xData=3;
     Xil_Out32(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR+0x28,xData); // Enable promiscous mode by setting register 10 bit 1.
     print("Device is in promiscous mode\n\r");
