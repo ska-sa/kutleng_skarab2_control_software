@@ -53,8 +53,9 @@
 int main()
 {
 	u64 U64Data;
+	u64 MACAddress;
 	u32 U32Data;
-	u16 U16Data;
+	u16 U16Data,u16Var;
     init_platform();
 
     /* Test Enable/Disable API*/
@@ -239,11 +240,52 @@ int main()
     U16Data = XGMAC_GetUDPPort(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
     xil_printf("XGMAC_GetUDPPort - UDPPort=0x%04hx\n\r",U16Data);
 
+    /* Test set/get RXSlotID API*/
+    for(U16Data = 0;U16Data<16;U16Data++)
+    {
+    	XGMAC_SetRXSlotID(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR,U16Data);
+    	u16Var = XGMAC_GetRXSlotID(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+    	xil_printf("XGMAC_GetRXSlotID - RXSlotID=%d\n\r",u16Var);
+    	u16Var = XGMAC_GetRXSlotStatus(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+    	xil_printf("XGMAC_GetRXSlotStatus - RXSlotStatus=%d\n\r",u16Var);
+    }
+
+    /* Test set/get TXSlotID API*/
+    for(U16Data = 0;U16Data<16;U16Data++)
+    {
+    	XGMAC_SetTXSlotID(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR,U16Data);
+    	u16Var = XGMAC_GetTXSlotID(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+    	xil_printf("XGMAC_GetTXSlotID - TXSlotID=%d\n\r",u16Var);
+    	u16Var = XGMAC_GetTXSlotStatus(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+    	xil_printf("XGMAC_GetTXSlotStatus - TXSlotStatus=%d\n\r",u16Var);
+        /* Test TXSlotset API*/
+        XGMAC_TXSlotSet(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+    	u16Var = XGMAC_GetTXSlotStatus(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+    	xil_printf("XGMAC_GetTXSlotStatus - TXSlotStatus=%d\n\r",u16Var);
+    	U32Data = XGMAC_GetTXNumberOfSlotsFilled(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+    	xil_printf("XGMAC_GetTXNumberOfSlotsFilled - TXNumberOfSlotsFilled=%d\n\r",U32Data);
+    }
+
+    /* Test RXSlotClear API*/
+    XGMAC_RXSlotClear(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+
+    /* Test TXSlotset API*/
+    XGMAC_TXSlotSet(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
+
     /* Test set/get UDP Port MAsk API*/
     U16Data = 0xFF00;/* 0xFF00 */
     XGMAC_SetUDPPortMask(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR,U16Data);
     U16Data = XGMAC_GetUDPPortMask(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
     xil_printf("XGMAC_GetUDPPortMask - UDPPortMask=0x%04hx\n\r",U16Data);
+
+    MACAddress = 0x0000000A35024192-10;
+
+    for(U16Data=0;U16Data<32;U16Data++)
+    {
+    	XGMAC_WriteARPCacheEntry(XPAR_ETHERNETCORE_MM_0_S03_AXI_BASEADDR,U16Data,MACAddress);
+    	U64Data=XGMAC_ReadARPCacheEntry(XPAR_ETHERNETCORE_MM_0_S03_AXI_BASEADDR,U16Data);
+    	MACAddress+=1;
+    }
 
     /* Test Statistics Reset API*/
     XGMAC_ResetStatisticsCounters(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);

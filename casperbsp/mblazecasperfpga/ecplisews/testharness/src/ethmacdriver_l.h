@@ -877,6 +877,187 @@ void XGMAC_WritePHYControlH(UINTPTR BaseAddress,u32 PHYHigh);
 ******************************************************************************/
 void XGMAC_WritePHYControlL(UINTPTR BaseAddress,u32 PHYLow);
 
+/****************************************************************************/
+/**
+*
+* This function set the cpu transmit slot id.
+*
+* @param	BaseAddress is the base address of the device
+* 			SlotID is the slot id to set
+* On RTOS based systems there must be a barrier between the register read and
+* the register write to make this an atomic read modify operation to prevent
+* sequential data coupling.
+* @return	None.
+*
+* @note		None.
+*
+******************************************************************************/
+void XGMAC_SetTXSlotID(UINTPTR BaseAddress,u16 SlotID);
+
+/****************************************************************************/
+/**
+*
+* This function gets the cpu transmit slot id
+*
+* @param	BaseAddress is the base address of the device
+*
+* @return	TXSlotID.
+*
+* @note		None.
+*
+******************************************************************************/
+u16 XGMAC_GetTXSlotID(UINTPTR BaseAddress);
+
+/****************************************************************************/
+/**
+*
+* This function set the cpu receive slot id.
+*
+* @param	BaseAddress is the base address of the device
+* 			SlotID is the slot id to set
+* On RTOS based systems there must be a barrier between the register read and
+* the register write to make this an atomic read modify operation to prevent
+* sequential data coupling.
+* @return	None.
+*
+* @note		None.
+*
+******************************************************************************/
+void XGMAC_SetRXSlotID(UINTPTR BaseAddress,u16 SlotID);
+
+
+/****************************************************************************/
+/**
+*
+* This function gets the cpu receive slot id
+*
+* @param	BaseAddress is the base address of the device
+*
+* @return	TXSlotID.
+*
+* @note		None.
+*
+******************************************************************************/
+u16 XGMAC_GetRXSlotID(UINTPTR BaseAddress);
+
+/****************************************************************************/
+/**
+*
+* This function gets  the cpu transmit slot status.
+*
+* @param	BaseAddress is the base address of the device
+* @return	TXSlotStatusBit.
+*
+* @note		None.
+*
+******************************************************************************/
+u32 XGMAC_GetTXSlotStatus(UINTPTR BaseAddress);
+
+/****************************************************************************/
+/**
+*
+* This function gets the cpu receive slot status.
+*
+* @param	BaseAddress is the base address of the device
+* @return	RXSlotStatusBit.
+*
+* @note		None.
+*
+******************************************************************************/
+u32 XGMAC_GetRXSlotStatus(UINTPTR BaseAddress);
+
+/****************************************************************************/
+/**
+*
+* This function gets the cpu receive slot status.
+*
+* @param	BaseAddress is the base address of the device
+* @return	RXNumberOfSlotsFilled.
+*
+* @note		None.
+*
+******************************************************************************/
+u32 XGMAC_GetRXNumberOfSlotsFilled(UINTPTR BaseAddress);
+
+/****************************************************************************/
+/**
+*
+* This function gets  the cpu transmit slot status.
+*
+* @param	BaseAddress is the base address of the device
+* @return	TXNumberOfSlotsFilled.
+*
+* @note		None.
+*
+******************************************************************************/
+u32 XGMAC_GetTXNumberOfSlotsFilled(UINTPTR BaseAddress);
+
+/****************************************************************************/
+/**
+*
+* This function clear the cpu receive slot.
+*
+* @param	BaseAddress is the base address of the device
+* 			SlotID is the slot id to set
+* On RTOS based systems there must be a barrier between the register read and
+* the register write to make this an atomic read modify operation to prevent
+* sequential data coupling.
+* @return	None.
+*
+* @note		None.
+*
+******************************************************************************/
+void XGMAC_RXSlotClear(UINTPTR BaseAddress);
+
+/****************************************************************************/
+/**
+*
+* This function set the cpu transmit slot.
+*
+* @param	BaseAddress is the base address of the device
+* 			SlotID is the slot id to set
+* On RTOS based systems there must be a barrier between the register read and
+* the register write to make this an atomic read modify operation to prevent
+* sequential data coupling.
+* @return	None.
+*
+* @note		None.
+*
+******************************************************************************/
+void XGMAC_TXSlotSet(UINTPTR BaseAddress);
+
+/****************************************************************************/
+/**
+*
+* This function gets the cpu receive slot status.
+*
+* @param	BaseAddress is the base address of the device
+* 			ARPEntryOffset is the offset of the ARP entry taken from the IP Address
+* 			e.g. 192.168.0.14 (For 0x00E is the ARP Entry Offset)
+* 			for multicast addresses the top bit is set e.g. 224.168.0.14 = 0x10E
+* 			MACAddress is the MAC address to be inserted into the table
+* @return	None.
+*
+* @note		None.
+*
+******************************************************************************/
+void XGMAC_WriteARPCacheEntry(UINTPTR BaseAddress,u16 ARPEntryOffset,u64 MACAddress);
+
+/****************************************************************************/
+/**
+*
+* This function gets the cpu receive slot status.
+*
+* @param	BaseAddress is the base address of the device
+* 			ARPEntryOffset is the offset of the ARP entry taken from the IP Address
+* 			e.g. 192.168.0.14 (For 0x00E is the ARP Entry Offset)
+* 			for multicast addresses the top bit is set e.g. 224.168.0.14 = 0x10E
+* @return	MACAddress contained on the ARP Entry Offset
+*
+* @note		None.
+*
+******************************************************************************/
+u64 XGMAC_ReadARPCacheEntry(UINTPTR BaseAddress,u16 ARPEntryOffset);
 #ifdef __cplusplus
 }
 #endif

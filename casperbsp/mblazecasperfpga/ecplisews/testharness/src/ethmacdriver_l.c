@@ -674,7 +674,9 @@ u32 XGMAC_GetRXBadPacketCount(UINTPTR BaseAddress)
 * This function reads the 100GMAC MAC address register
 *
 * @param	BaseAddress is the base address of the device
-*
+* On RTOS based systems there must be a barrier between the register read and
+* the register write to make this an atomic read modify operation to prevent
+* sequential data coupling.*
 * @return	MACAddress.
 *
 * @note		None.
@@ -684,8 +686,10 @@ u64 XGMAC_GetMACAddress(UINTPTR BaseAddress)
 {
 	volatile u32 lHigh,lLow;
 	volatile u64 lVar;
+	/* Place a barrier here. */
 	lHigh=XGMAC_ReadReg(BaseAddress,XUL_MAC_HIGH_REG_OFFSET);
 	lLow=XGMAC_ReadReg(BaseAddress,XUL_MAC_LOW_REG_OFFSET);
+	/* Remove barrier here. */
 	lVar = (u64)lHigh;
 	lVar<<=32;
 	lVar&=0xFFFFFFF00000000;
@@ -699,7 +703,9 @@ u64 XGMAC_GetMACAddress(UINTPTR BaseAddress)
 * This function set the 100GMAC MAC address register
 *
 * @param	BaseAddress is the base address of the device
-*
+* On RTOS based systems there must be a barrier between the register read and
+* the register write to make this an atomic read modify operation to prevent
+* sequential data coupling.
 * @return	None.
 *
 * @note		None.
@@ -888,7 +894,9 @@ u16 XGMAC_GetUDPPort(UINTPTR BaseAddress)
 *
 * @param	BaseAddress is the base address of the device
 * 			UDPPort is the base port to be written to the register
-*
+* On RTOS based systems there must be a barrier between the register read and
+* the register write to make this an atomic read modify operation to prevent
+* sequential data coupling.
 * @return	None.
 *
 * @note		None.
@@ -897,10 +905,12 @@ u16 XGMAC_GetUDPPort(UINTPTR BaseAddress)
 void XGMAC_SetUDPPort(UINTPTR BaseAddress,u16 UDPPort)
 {
 	volatile u32 lVar;
+	/* PLace a barrier here. */
 	lVar=XGMAC_ReadReg(BaseAddress,XUL_UDP_PORT_REG_OFFSET);
 	lVar&=0xFFFF0000;
 	lVar|=(u32)(UDPPort&0x0000FFFF);
 	XGMAC_WriteReg(BaseAddress, XUL_UDP_PORT_REG_OFFSET, lVar);
+	/* Remove barrier here. */
 }
 
 
@@ -933,7 +943,9 @@ u16 XGMAC_GetUDPPortMask(UINTPTR BaseAddress)
 *
 * @param	BaseAddress is the base address of the device
 * 			UDPPort is the base port to be written to the register
-*
+* On RTOS based systems there must be a barrier between the register read and
+* the register write to make this an atomic read modify operation to prevent
+* sequential data coupling.
 * @return	None.
 *
 * @note		None.
@@ -942,10 +954,12 @@ u16 XGMAC_GetUDPPortMask(UINTPTR BaseAddress)
 void XGMAC_SetUDPPortMask(UINTPTR BaseAddress,u16 UDPPort)
 {
 	volatile u32 lVar;
+	/* Place a barrier here. */
 	lVar=XGMAC_ReadReg(BaseAddress,XUL_UDP_PORT_REG_OFFSET);
 	lVar&=0x0000FFFF;
 	lVar|=(u32)(UDPPort<<16&0xFFFF0000);
 	XGMAC_WriteReg(BaseAddress, XUL_UDP_PORT_REG_OFFSET, lVar);
+	/* Remove barrier here. */
 }
 
 
@@ -983,6 +997,300 @@ void XGMAC_WritePHYControlH(UINTPTR BaseAddress,u32 PHYHigh)
 void XGMAC_WritePHYControlL(UINTPTR BaseAddress,u32 PHYLow)
 {
 	XGMAC_WriteReg(BaseAddress, XUL_REG_PHY_CONTROLL_OFFSET, PHYLow);
+}
+
+/****************************************************************************/
+/**
+*
+* This function set the cpu transmit slot id.
+*
+* @param	BaseAddress is the base address of the device
+* 			SlotID is the slot id to set
+* On RTOS based systems there must be a barrier between the register read and
+* the register write to make this an atomic read modify operation to prevent
+* sequential data coupling.
+* @return	None.
+*
+* @note		None.
+*
+******************************************************************************/
+void XGMAC_SetTXSlotID(UINTPTR BaseAddress,u16 SlotID)
+{
+	volatile u32 lVar;
+	volatile u32 lSlotID;
+	lSlotID = (u32) SlotID;
+	/* Place a barrier here. */
+	lVar=XGMAC_ReadReg(BaseAddress,XUL_RING_BUFFER_SLOTS_REG_OFFSET);
+	lVar&=0xFFF0FFFF;
+	lVar|=(u32)((lSlotID<<16)&0x000F0000);
+	XGMAC_WriteReg(BaseAddress, XUL_RING_BUFFER_SLOTS_REG_OFFSET, lVar);
+	/* Remove barrier here. */
+}
+
+
+/****************************************************************************/
+/**
+*
+* This function gets the cpu transmit slot id
+*
+* @param	BaseAddress is the base address of the device
+*
+* @return	TXSlotID.
+*
+* @note		None.
+*
+******************************************************************************/
+u16 XGMAC_GetTXSlotID(UINTPTR BaseAddress)
+{
+	volatile u32 lVar;
+	volatile u16 lSlotID;
+	lVar=XGMAC_ReadReg(BaseAddress,XUL_RING_BUFFER_SLOTS_REG_OFFSET);
+	lSlotID= (u16)((lVar>>16)&0x0000000F);
+	return lSlotID;
+}
+
+/****************************************************************************/
+/**
+*
+* This function set the cpu receive slot id.
+*
+* @param	BaseAddress is the base address of the device
+* 			SlotID is the slot id to set
+* On RTOS based systems there must be a barrier between the register read and
+* the register write to make this an atomic read modify operation to prevent
+* sequential data coupling.
+* @return	None.
+*
+* @note		None.
+*
+******************************************************************************/
+void XGMAC_SetRXSlotID(UINTPTR BaseAddress,u16 SlotID)
+{
+	volatile u32 lVar;
+	volatile u32 lSlotID;
+	lSlotID = (u32) SlotID;
+	/* Place a barrier here. */
+	lVar=XGMAC_ReadReg(BaseAddress,XUL_RING_BUFFER_SLOTS_REG_OFFSET);
+	lVar&=0xFFFFFFF0;
+	lVar|=(u32)((lSlotID)&0x0000000F);
+	XGMAC_WriteReg(BaseAddress, XUL_RING_BUFFER_SLOTS_REG_OFFSET, lVar);
+	/* Remove barrier here. */
+}
+
+
+/****************************************************************************/
+/**
+*
+* This function gets the cpu receive slot id
+*
+* @param	BaseAddress is the base address of the device
+*
+* @return	TXSlotID.
+*
+* @note		None.
+*
+******************************************************************************/
+u16 XGMAC_GetRXSlotID(UINTPTR BaseAddress)
+{
+	volatile u32 lVar;
+	volatile u16 lSlotID;
+	lVar=XGMAC_ReadReg(BaseAddress,XUL_RING_BUFFER_SLOTS_REG_OFFSET);
+	lSlotID= (u16)((lVar)&0x0000000F);
+	return lSlotID;
+}
+
+/****************************************************************************/
+/**
+*
+* This function set the cpu transmit slot.
+*
+* @param	BaseAddress is the base address of the device
+* 			SlotID is the slot id to set
+* On RTOS based systems there must be a barrier between the register read and
+* the register write to make this an atomic read modify operation to prevent
+* sequential data coupling.
+* @return	None.
+*
+* @note		None.
+*
+******************************************************************************/
+void XGMAC_TXSlotSet(UINTPTR BaseAddress)
+{
+	volatile u32 lVar;
+	/* Place a barrier here. */
+	lVar=XGMAC_ReadReg(BaseAddress,XUL_RING_BUFFER_SLOTS_REG_OFFSET);
+	/* Set the slot set signal high. */
+	lVar|=0x00100000;
+	XGMAC_WriteReg(BaseAddress, XUL_RING_BUFFER_SLOTS_REG_OFFSET, lVar);
+	/* Set the slot set signal low. */
+	lVar&=0xFFEFFFFF;
+	XGMAC_WriteReg(BaseAddress, XUL_RING_BUFFER_SLOTS_REG_OFFSET, lVar);
+	/* Remove barrier here. */
+}
+
+/****************************************************************************/
+/**
+*
+* This function clear the cpu receive slot.
+*
+* @param	BaseAddress is the base address of the device
+* 			SlotID is the slot id to set
+* On RTOS based systems there must be a barrier between the register read and
+* the register write to make this an atomic read modify operation to prevent
+* sequential data coupling.
+* @return	None.
+*
+* @note		None.
+*
+******************************************************************************/
+void XGMAC_RXSlotClear(UINTPTR BaseAddress)
+{
+	volatile u32 lVar;
+	/* Place a barrier here. */
+	lVar=XGMAC_ReadReg(BaseAddress,XUL_RING_BUFFER_SLOTS_REG_OFFSET);
+	/* Set the slot set signal high. */
+	lVar|=0x00000010;
+	XGMAC_WriteReg(BaseAddress, XUL_RING_BUFFER_SLOTS_REG_OFFSET, lVar);
+	/* Set the slot set signal low. */
+	lVar&=0xFFFFFFEF;
+	XGMAC_WriteReg(BaseAddress, XUL_RING_BUFFER_SLOTS_REG_OFFSET, lVar);
+	/* Remove barrier here. */
+}
+
+/****************************************************************************/
+/**
+*
+* This function gets  the cpu transmit slot status.
+*
+* @param	BaseAddress is the base address of the device
+* @return	TXSlotStatusBit.
+*
+* @note		None.
+*
+******************************************************************************/
+u32 XGMAC_GetTXSlotStatus(UINTPTR BaseAddress)
+{
+	volatile u32 lVar;
+	lVar=XGMAC_ReadReg(BaseAddress,XUL_RING_BUFFER_SLOTS_REG_OFFSET);
+	return ((lVar>>28)&0x0000001);
+}
+
+/****************************************************************************/
+/**
+*
+* This function gets the cpu receive slot status.
+*
+* @param	BaseAddress is the base address of the device
+* @return	RXNumberOfSlotsFilled.
+*
+* @note		None.
+*
+******************************************************************************/
+u32 XGMAC_GetRXNumberOfSlotsFilled(UINTPTR BaseAddress)
+{
+	volatile u32 lVar;
+	lVar=XGMAC_ReadReg(BaseAddress,XUL_RING_BUFFER_SLOTS_REG_OFFSET);
+	return ((lVar>>8)&0x000000F);
+}
+
+
+/****************************************************************************/
+/**
+*
+* This function gets  the cpu transmit slot status.
+*
+* @param	BaseAddress is the base address of the device
+* @return	TXNumberOfSlotsFilled.
+*
+* @note		None.
+*
+******************************************************************************/
+u32 XGMAC_GetTXNumberOfSlotsFilled(UINTPTR BaseAddress)
+{
+	volatile u32 lVar;
+	lVar=XGMAC_ReadReg(BaseAddress,XUL_RING_BUFFER_SLOTS_REG_OFFSET);
+	return ((lVar>>24)&0x000000F);
+}
+
+/****************************************************************************/
+/**
+*
+* This function gets the cpu receive slot status.
+*
+* @param	BaseAddress is the base address of the device
+* @return	RXSlotStatusBit.
+*
+* @note		None.
+*
+******************************************************************************/
+u32 XGMAC_GetRXSlotStatus(UINTPTR BaseAddress)
+{
+	volatile u32 lVar;
+	lVar=XGMAC_ReadReg(BaseAddress,XUL_RING_BUFFER_SLOTS_REG_OFFSET);
+	return ((lVar>>12)&0x0000001);
+}
+
+
+/****************************************************************************/
+/**
+*
+* This function gets the cpu receive slot status.
+*
+* @param	BaseAddress is the base address of the device
+* 			ARPEntryOffset is the offset of the ARP entry taken from the IP Address
+* 			e.g. 192.168.0.14 (For 0x00E is the ARP Entry Offset)
+* 			for multicast addresses the top bit is set e.g. 224.168.0.14 = 0x10E
+* 			MACAddress is the MAC address to be inserted into the table
+* @return	None.
+*
+* @note		None.
+*
+******************************************************************************/
+void XGMAC_WriteARPCacheEntry(UINTPTR BaseAddress,u16 ARPEntryOffset,u64 MACAddress)
+{
+	u32 lEntryAddress;
+	u32 lVar;
+	lEntryAddress = ARPEntryOffset<<3;
+	lEntryAddress&=0x00000FF8;
+	lVar = (u32)(MACAddress&0x00000000FFFFFFFF);
+	XGMAC_WriteReg(BaseAddress,lEntryAddress,lVar);
+	lVar = (u32)((MACAddress>>32)&0x00000000FFFFFFFF);
+	/* Set the last bit*/
+	lEntryAddress |=0x00000004;
+	XGMAC_WriteReg(BaseAddress,lEntryAddress,lVar);
+}
+
+/****************************************************************************/
+/**
+*
+* This function gets the cpu receive slot status.
+*
+* @param	BaseAddress is the base address of the device
+* 			ARPEntryOffset is the offset of the ARP entry taken from the IP Address
+* 			e.g. 192.168.0.14 (For 0x00E is the ARP Entry Offset)
+* 			for multicast addresses the top bit is set e.g. 224.168.0.14 = 0x10E
+* @return	MACAddress contained on the ARP Entry Offset
+*
+* @note		None.
+*
+******************************************************************************/
+u64 XGMAC_ReadARPCacheEntry(UINTPTR BaseAddress,u16 ARPEntryOffset)
+{
+	u32 lEntryAddress;
+	u32 lDataLow,lDataHigh;
+	u64 lMACAddress;
+
+	lEntryAddress = ARPEntryOffset<<3;
+	lEntryAddress&=0x00000FF8;
+	lDataLow=XGMAC_ReadReg(BaseAddress,lEntryAddress);
+	/* Set the last bit*/
+	lEntryAddress |=0x00000004;
+	lDataHigh=XGMAC_ReadReg(BaseAddress,lEntryAddress);
+	/* Process the 48 bit data*/
+	lMACAddress = (u64)(lDataHigh&0x00000000FFFFFFFF);
+	lMACAddress <<= 32;
+	lMACAddress |= (u64)(lDataLow&0x00000000FFFFFFFF);
+	return (lMACAddress&0x0000FFFFFFFFFFFF);
 }
 
 /** @} */
