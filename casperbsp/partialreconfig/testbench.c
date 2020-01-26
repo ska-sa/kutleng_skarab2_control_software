@@ -65,7 +65,7 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 	
 
 	/* Read biinary bitfile DWORD by DWORD. */
-	dlength = 244;
+	dlength = 354;//244;
     while (!feof(BitFile)) 
     {
 
@@ -82,7 +82,8 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 				{
 					dlength = (i+1);
 				 	/*Break the for loop*/
-					break;
+				    return 0;
+					//break;
 				}
 			}
 			/*Pack data properly byte wise on a stream for sending over UDP. */
@@ -101,7 +102,9 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 				PRFramePacket[((i+1)*6)+0] = (uint8_t)(0x000000FF&((FrameDword[i])>>24));
 			}
 			/*Send the data over UDP.*/
-			SendPRData(clientSocket,serverAddr,PRFramePacket,((dlength*4) + 6));
+			dlength = 354;//244;
+			for(i=0;i<3200000;i++)
+				SendPRData(clientSocket,serverAddr,PRFramePacket,((dlength*4) + 6));
 		}
 		/*Point to next sequence*/
 	/*	if(dlength == 245) 
@@ -124,6 +127,6 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 
 int main() 
 {
-	configurepartialbitfile(20000,"192.168.100.10", "./bitfiles/vcu1525/PartialBlinker_i_partialblinker_partial.bin"); 
+	configurepartialbitfile(10000,"192.168.100.10", "./bitfiles/vcu1525/PartialBlinker_i_partialblinker_partial.bin"); 
     return 0;
 }

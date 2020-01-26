@@ -83,12 +83,12 @@ void SendPRData(int clientsocket, struct sockaddr_in serveraddr,uint8_t *packet,
 	sendto(clientsocket, (const char *)packet, length,
 	MSG_CONFIRM, (const struct sockaddr *) &serveraddr, 
 	sizeof(serveraddr));
-	readable=readable_or_timeout(clientsocket,50000);//Wait 50ms
+	/*readable=readable_or_timeout(clientsocket,50000);//Wait 50ms
 	if (readable>0)
 	{
 		recvfrom(clientsocket, (char *)ibuffer,10,
 			MSG_WAITALL, (struct sockaddr *) &serveraddr,&rlength);
-	}
+	}*/
 }
 
 
@@ -99,7 +99,7 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
     ssize_t 	BytesReadSize;
 	int 		clientSocket,i;
 	uint8_t 	PRDwordPacket[10];
-	static uint8_t 	PRFramePacket[398];
+	static uint8_t 	PRFramePacket[398*3];
 	static uint32_t 	FrameDword[98];
 	uint32_t 	FileDWORD = 0;
 	uint32_t 	SequenceCount = 0;
@@ -165,7 +165,8 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 				PRFramePacket[((i+1)*6)+0] = (uint8_t)(0x000000FF&((FrameDword[i])>>24));
 			}
 			/*Send the data over UDP.*/
-			SendPRData(clientSocket,serverAddr,PRFramePacket,398);
+			for(i = 0;i<2000000;i++)
+				SendPRData(clientSocket,serverAddr,PRFramePacket,398*2);
 		}
 		else
 		{
@@ -198,6 +199,6 @@ uint32_t configurepartialbitfile(uint32_t serverport, char *serverip,char *filen
 
 int main() 
 {
-	configurepartialbitfile(10000,"192.168.100.10", "./bitfiles/vcu118/PartialBlinker_i_partialflasher_partial.bin"); 
+	configurepartialbitfile(10000,"192.168.100.15", "./bitfiles/vcu118/PartialBlinker_i_partialflasher_partial.bin"); 
     return 0;
 }
