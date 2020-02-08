@@ -103,7 +103,7 @@ static int timeout = 5;
 static int xpdev_cnt = 0;
 
 static const struct pci_device_id xilinx_dma_pci_ids[] = {
-	{ PCI_DEVICE(PCI_VENDOR_ID_XILINX, PCI_XDMA_DEVICE_ID_XILINX_PCIE), },
+	{ PCI_DEVICE(PCI_VENDOR_ID_XILINX, PCI_DEVICE_ID_XILINX_XDMA_PCIE), },
 	{0,}
 };
 

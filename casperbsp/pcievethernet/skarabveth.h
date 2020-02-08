@@ -74,7 +74,7 @@ irqreturn_t skarabveth_irq_handler(int irq, void *dev_id);
 irqreturn_t skarabveth_irq_msi_handler(int irq, void *dev_id);
 
 #define PCI_VENDOR_ID_XILINX      0x10ee
-#define PCI_XDMA_DEVICE_ID_XILINX_PCIE 0x903f
+#define PCI_DEVICE_ID_XILINX_XDMA_PCIE 0x903f
 #define BAR_APPERTURE_SIZE        1024       /**< We are using 1K BARS. */
 
 #define HAVE_MEM_REGION        0x001      /**< I/O Memory region     */
