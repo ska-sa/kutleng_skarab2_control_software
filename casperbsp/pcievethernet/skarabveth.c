@@ -70,8 +70,11 @@
 #include <linux/pci.h>
 #include <linux/interrupt.h>
 #include <linux/io.h>
+#include <linux/aer.h>
 
 #include "skarabveth.h"
+#include "libxdma.h"
+#include "libxdma_api.h"
 
 #define DRIVER_MODULE_NAME			"skarabveth"
 #define DRIVER_MODULE_DESCRIPTION	"SKARAB Virtual Ethernet Driver"
@@ -91,27 +94,22 @@ struct pci_dev *gPCIeDevice = NULL;     		           /**< PCI device structure. 
 int             gPCIeIrq;       		        	       /**< IRQ assigned by PCI system.                       */
 unsigned int    gStatFlags = 0x00;         	 			   /**< Status flags used for cleanup. */
 
-static struct net_device *skarabveth;                      /**< Netowrk device handle. */
+static struct 	net_device *skarabveth;                    /**< Netowrk device handle. */
 
 int skarabveth_rebuild_header(struct sk_buff *skb);
 
 static int timeout = 5; 
+/* SECTION: Module global variables */
+static int xpdev_cnt = 0;
 
-#ifdef __VETH_DEBUG__
-inline void __write_register(const char *fn, u32 value, void *iomem, unsigned long off)
-{
-	printk(KERN_ERROR"%s: w reg 0x%lx(0x%p), 0x%x.\n", fn, off, iomem, value);
-	iowrite32(value, iomem);
-}
-#define write_register(v,mem,off) __write_register(__func__, v, mem, off)
-#else
-#define write_register(v,mem,off) iowrite32(v, mem)
-#endif
+static const struct pci_device_id xilinx_dma_pci_ids[] = {
+	{ PCI_DEVICE(PCI_VENDOR_ID_XILINX, PCI_XDMA_DEVICE_ID_XILINX_PCIE), },
+	{0,}
+};
 
-inline u32 read_register(void *iomem)
-{
-	return ioread32(iomem);
-}
+MODULE_DEVICE_TABLE(pci, xilinx_dma_pci_ids);
+
+
 
 /** 
  \fn int skarabveth_open(struct net_device *dev) 
@@ -119,7 +117,7 @@ inline u32 read_register(void *iomem)
  
  
  \param [inout] struct net_device *dev The network device handle
- 
+ \return  Error and status value
  \todo Perhaps put the probing of the device here?
 
  \note The virtual ethernet drivers will work if the XDMA module is found
@@ -139,6 +137,7 @@ static int skarabveth_open (struct net_device *dev)
  
  
  \param [inout] struct net_device *dev The network device handle
+ \return  Error and status value
  */
 static int skarabveth_release (struct net_device *dev)
 {
@@ -156,6 +155,7 @@ static int skarabveth_release (struct net_device *dev)
  
  \param [in] struct sk_buff *skb The Linux ethernet packet buffer
  \param [inout] struct net_device *dev The network device handle
+ \return  Error and status value
  */
 static int skarabveth_xmit (struct sk_buff *skb, 
 				struct net_device *dev)
@@ -185,6 +185,7 @@ static int skarabveth_xmit (struct sk_buff *skb,
  \param [inout] struct net_device *dev The network device handle
  \param [in] struct ifreq *request The IOCTL request
  \param [in] int cmd Commands for the IOCTL operation
+ \return  Error and status value
  */
 int skarabveth_ioctl(struct net_device *dev, struct ifreq *request, int cmd)
 {
@@ -198,6 +199,7 @@ int skarabveth_ioctl(struct net_device *dev, struct ifreq *request, int cmd)
           since arp is not supported on the interface
  
  \param [inout] struct sk_buff *skb The Linux ethernet packet buffer
+ \return  Error and status value
  */
 int skarabveth_rebuild_header(struct sk_buff *skb)
 {
@@ -223,6 +225,7 @@ int skarabveth_rebuild_header(struct sk_buff *skb)
  \param [in] const void *daddr 
  \param [in] const void *saddr 
  \param [in] unsigned int len 
+ \return  Ethernet header length
  */
 int skarabveth_header(struct sk_buff *skb, struct net_device *dev,
                 unsigned short type, const void *daddr, const void *saddr,
@@ -247,6 +250,7 @@ int skarabveth_header(struct sk_buff *skb, struct net_device *dev,
  
  \param [inout] struct net_device *dev The network device handle
  \param [in] int vethernet_mtu The new MTU for the interface
+ \return  Error and status value
  */
 int skarabveth_change_mtu(struct net_device *dev, int vethernet_mtu)
 {
@@ -270,6 +274,7 @@ int skarabveth_change_mtu(struct net_device *dev, int vethernet_mtu)
  
  
  \param [inout] struct net_device *dev The network device handle
+ \return  Error and status value
  */
 void skarabveth_tx_timeout (struct net_device *dev)
 {
@@ -289,6 +294,7 @@ void skarabveth_tx_timeout (struct net_device *dev)
  
  \param [inout] struct net_device *dev The network device handle
  \param [in] struct ifmap *map The changes for the interface
+ \return  Error and status value
  */
 int skarabveth_config(struct net_device *dev, struct ifmap *map)
 {
@@ -319,12 +325,195 @@ int skarabveth_config(struct net_device *dev, struct ifmap *map)
  
  
  \param [inout] struct net_device *dev The network device handle
+ \return  Device statistics
  */
 struct net_device_stats *skarabveth_stats(struct net_device *dev)
 {
 	struct skarabveth_priv *priv = netdev_priv(dev);
 	return &priv->stats;
 }
+
+static void xpdev_free(struct xdma_pci_dev *xpdev)
+{
+	struct xdma_dev *xdev = xpdev->xdev;
+
+	pr_info("xpdev 0x%p, xdev 0x%p xdma_device_close.\n", xpdev, xdev);
+	xdma_device_close(xpdev->pdev, xdev);
+	xpdev_cnt--;
+
+	kfree(xpdev);
+}
+
+static struct xdma_pci_dev *xpdev_alloc(struct pci_dev *pdev)
+{
+	struct xdma_pci_dev *xpdev = kmalloc(sizeof(*xpdev), GFP_KERNEL);	
+
+	if (!xpdev)
+		return NULL;
+	memset(xpdev, 0, sizeof(*xpdev));
+
+	xpdev->magic = MAGIC_DEVICE;
+	xpdev->pdev = pdev;
+	xpdev->user_max = MAX_USER_IRQ;
+	xpdev->h2c_channel_max = XDMA_CHANNEL_NUM_MAX;
+	xpdev->c2h_channel_max = XDMA_CHANNEL_NUM_MAX;
+
+	xpdev_cnt++;
+	return xpdev;
+}
+
+static int probe_xilinx_fpga_pcie_card(struct pci_dev *pdev, const struct pci_device_id *id)
+{
+	int rv = 0;
+	struct xdma_pci_dev *xpdev = NULL;
+	struct xdma_dev *xdev;
+	void *hndl;
+
+	xpdev = xpdev_alloc(pdev);
+	if (!xpdev)
+		return -ENOMEM;
+
+	hndl = xdma_device_open(DRIVER_MODULE_NAME, pdev, &xpdev->user_max,
+			&xpdev->h2c_channel_max, &xpdev->c2h_channel_max);
+	if (!hndl)
+		return -EINVAL;
+
+	BUG_ON(xpdev->user_max > MAX_USER_IRQ);
+	BUG_ON(xpdev->h2c_channel_max > XDMA_CHANNEL_NUM_MAX);
+	BUG_ON(xpdev->c2h_channel_max > XDMA_CHANNEL_NUM_MAX);
+
+	if (!xpdev->h2c_channel_max && !xpdev->c2h_channel_max)
+		pr_warn("NO engine found!\n");
+
+	if (xpdev->user_max) {
+		u32 mask = (1 << (xpdev->user_max + 1)) - 1;
+
+		rv = xdma_user_isr_enable(hndl, mask);
+		if (rv)
+			goto err_out;
+	}
+
+	/* make sure no duplicate */
+	xdev = xdev_find_by_pdev(pdev);
+	if (!xdev) {
+		pr_warn("NO xdev found!\n");
+		return -EINVAL;
+	}
+	BUG_ON(hndl != xdev );
+
+	pr_info("%s xdma%d, pdev 0x%p, xdev 0x%p, 0x%p, usr %d, ch %d,%d.\n",
+		dev_name(&pdev->dev), xdev->idx, pdev, xpdev, xdev,
+		xpdev->user_max, xpdev->h2c_channel_max,
+		xpdev->c2h_channel_max);
+
+	xpdev->xdev = hndl;
+
+    dev_set_drvdata(&pdev->dev, xpdev);
+
+	return 0;
+
+err_out:	
+	pr_err("pdev 0x%p, err %d.\n", pdev, rv);
+	xpdev_free(xpdev);
+	return rv;
+}
+
+static void remove_xilinx_fpga_pcie_driver(struct pci_dev *pdev)
+{
+	struct xdma_pci_dev *xpdev;
+
+	if (!pdev)
+		return;
+
+	xpdev = dev_get_drvdata(&pdev->dev);
+	if (!xpdev)
+		return;
+
+	pr_info("pdev 0x%p, xdev 0x%p, 0x%p.\n",
+		pdev, xpdev, xpdev->xdev);
+	xpdev_free(xpdev);
+
+        dev_set_drvdata(&pdev->dev, NULL);
+}
+
+static pci_ers_result_t xdma_error_detected(struct pci_dev *pdev,
+					pci_channel_state_t state)
+{
+	struct xdma_pci_dev *xpdev = dev_get_drvdata(&pdev->dev);
+
+	switch (state) {
+	case pci_channel_io_normal:
+		return PCI_ERS_RESULT_CAN_RECOVER;
+	case pci_channel_io_frozen:
+		pr_warn("dev 0x%p,0x%p, frozen state error, reset controller\n",
+			pdev, xpdev);
+		xdma_device_offline(pdev, xpdev->xdev);
+		pci_disable_device(pdev);
+		return PCI_ERS_RESULT_NEED_RESET;
+	case pci_channel_io_perm_failure:
+		pr_warn("dev 0x%p,0x%p, failure state error, req. disconnect\n",
+			pdev, xpdev);
+		return PCI_ERS_RESULT_DISCONNECT;
+	}
+	return PCI_ERS_RESULT_NEED_RESET;
+}
+
+static pci_ers_result_t xdma_slot_reset(struct pci_dev *pdev)
+{
+	struct xdma_pci_dev *xpdev = dev_get_drvdata(&pdev->dev);
+
+	pr_info("0x%p restart after slot reset\n", xpdev);
+	if (pci_enable_device_mem(pdev)) {
+		pr_info("0x%p failed to renable after slot reset\n", xpdev);
+		return PCI_ERS_RESULT_DISCONNECT;
+	}
+
+	pci_set_master(pdev);
+	pci_restore_state(pdev);
+	pci_save_state(pdev);
+	xdma_device_online(pdev, xpdev->xdev);
+
+	return PCI_ERS_RESULT_RECOVERED;
+}
+
+static void xdma_error_resume(struct pci_dev *pdev)
+{
+	struct xdma_pci_dev *xpdev = dev_get_drvdata(&pdev->dev);
+
+	pr_info("dev 0x%p,0x%p.\n", pdev, xpdev);
+	pci_cleanup_aer_uncorrect_error_status(pdev);
+}
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,13,0)
+static void xdma_reset_prepare(struct pci_dev *pdev)
+{
+	struct xdma_pci_dev *xpdev = dev_get_drvdata(&pdev->dev);
+
+	pr_info("dev 0x%p,0x%p.\n", pdev, xpdev);
+	xdma_device_offline(pdev, xpdev->xdev);
+}
+
+static void xdma_reset_done(struct pci_dev *pdev)
+{
+	struct xdma_pci_dev *xpdev = dev_get_drvdata(&pdev->dev);
+
+	pr_info("dev 0x%p,0x%p.\n", pdev, xpdev);
+	xdma_device_online(pdev, xpdev->xdev);
+}
+
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,16,0)
+static void xdma_reset_notify(struct pci_dev *pdev, bool prepare)
+{
+	struct xdma_pci_dev *xpdev = dev_get_drvdata(&pdev->dev);
+
+	pr_info("dev 0x%p,0x%p, prepare %d.\n", pdev, xpdev, prepare);
+
+	if (prepare)
+		xdma_device_offline(pdev, xpdev->xdev);
+	else
+		xdma_device_online(pdev, xpdev->xdev);
+}
+#endif
 
 static const struct header_ops skarabveth_header_ops = {
    .create  = skarabveth_header,
@@ -344,37 +533,26 @@ static const struct net_device_ops skarabveth_netdev_ops = {
 	.ndo_tx_timeout = skarabveth_tx_timeout,
 };
 
+static const struct pci_error_handlers xdma_error_handler = {
+	.error_detected	= xdma_error_detected,
+	.slot_reset	= xdma_slot_reset,
+	.resume		= xdma_error_resume,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,13,0)
+	.reset_prepare	= xdma_reset_prepare,
+	.reset_done	= xdma_reset_done,
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3,16,0)
+	.reset_notify	= xdma_reset_notify,
+#endif
+};
 
-/** 
- \fn irqreturn_t skarabveth_irq_handler(int irq, void *dev_id)
- 
- \details This legacy IRQ handler function.
- 
- 
- \param [inout] int irq The interupt id
- \param [inout] void *dev_id The network device handle
- */
-irqreturn_t skarabveth_irq_handler(int irq, void *dev_id)
-{
-	trace_printk("PCIe XDMA Legacy-PCIe-Shared-IRQ called %d\n",irq);
-	return 0;
-}
-/** 
- \fn irqreturn_t skarabveth_irq_msi_handler(int irq, void *dev_id)
- 
- \details This MSI IRQ handler function.
- 
- 
- \param [inout] int irq The interupt id
- \param [inout] void *dev_id The network device handle
- */
-irqreturn_t skarabveth_irq_msi_handler(int irq, void *dev_id)
-{
-	trace_printk("PCIe XDMA MSI_N-IRQ called irq = %d \n",irq);
+static struct pci_driver xilinx_dma_pci_driver = {
+	.name = DRIVER_MODULE_NAME,
+	.id_table = xilinx_dma_pci_ids,
+	.probe = probe_xilinx_fpga_pcie_card,
+	.remove = remove_xilinx_fpga_pcie_driver,
+	.err_handler = &xdma_error_handler,
+};
 
-	return IRQ_HANDLED;
-//	return IRQ_RETVAL(1);
-}
 
 /** 
  \fn void skarabveth_init(struct net_device *dev)
@@ -383,6 +561,7 @@ irqreturn_t skarabveth_irq_msi_handler(int irq, void *dev_id)
  
  
  \param [inout] struct net_device *dev The network device handle
+ \return  None
  */
 void skarabveth_init (struct net_device *dev)
 {
@@ -408,191 +587,24 @@ void skarabveth_init (struct net_device *dev)
 
 
 /** 
- \fn void skarabveth_init_module(void)
+ \fn int skarabveth_init_module(void)
  
  \details This the kernel module initialise functionfor the interface.
+ \return  Error and status value
  
  
  */
 int skarabveth_init_module (void)
 {
 	int result;
-	/**
-	  Find the Xilinx EP device.  
-	  The device is found by matching device and vendor ID's which is 
-	  defined at the top of this file. Be default, the driver will
-	  look for 10EE & 903f.
-	  If the core is generated with other settings, the defines at the
-	  top must be changed or the driver will not load
-	 */
-	gPCIeDevice = pci_get_device (PCI_VENDOR_ID_XILINX,
-								  PCI_XDMA_DEVICE_ID_XILINX_PCIE,
-								  gPCIeDevice);
-	if (NULL == gPCIeDevice)
+	
+
+	result = pci_register_driver(&xilinx_dma_pci_driver);
+	if (result < 0)
 	{
-		/** If a matching device or vendor ID is not found,
-		  return failure and update kernel log.
-		  NOTE: In fedora systems, the kernel log is 
-		  located at: /var/log/messages
-		 */
-		printk(KERN_ERR"%s: skarabveth_init_module: Error PCIe Device Vedor[%04x]:[%04x] not found.\n", 
-			   DRIVER_MODULE_NAME,PCI_VENDOR_ID_XILINX,PCI_XDMA_DEVICE_ID_XILINX_PCIE);
-		return (ERROR);
-	}
-	
-	/**
-	 PCIe XDMA Bus Master Enable
-	 */
-	 
-	if (0 > pci_enable_device(gPCIeDevice))
-	{
-		printk(KERN_ERR"%s: skarabveth_init_module: Could not enable XDMA to be PCIe bus master.\n", DRIVER_MODULE_NAME);		
-		return (ERROR);
-	}
-
-	/**
-	 PCIe Set DMA Mask to enable 64 bit 
-	 */
-	
-    if (pci_set_dma_mask(gPCIeDevice, DMA_BIT_MASK(64)) || pci_set_consistent_dma_mask(gPCIeDevice, DMA_BIT_MASK(64)))
-	{
-        printk(KERN_ERR"%s: skarabveth_init_module: Error could not set pci dma mask.\n", DRIVER_MODULE_NAME);
-		return (ERROR);
-    }
-    
-	
-	/**
-	  Get Base Address of registers from pci structure. 
-	  Should come from pci_dev structure, but that element seems to
-	  be missing on the development system.
-	 */
-	gHwRegisterBaseAddress = pci_resource_start (gPCIeDevice, 0);
-
-	if (0 > gHwRegisterBaseAddress)
-	{
-		printk(KERN_WARNING"%s: skarabveth_init_module: Error Base Address not set.\n", DRIVER_MODULE_NAME);
-		return (ERROR);
-	}     
-
-	/**
-	  Print Base Address to kernel log
-	 */
-	printk(KERN_ALERT"%s: skarabveth_init_module : PCIe Base Address hw val =0X%08X\n", DRIVER_MODULE_NAME, (unsigned int)gHwRegisterBaseAddress);
-	
-	/**
-	  Get the Base Address Length
-	 */
-	gRegisterBaseLength = pci_resource_len(gPCIeDevice, 0);
-	
-	/**
-	  Print the Base Address Length to Kernel Log
-	 */
-	printk(KERN_ALERT"%s: skarabveth_init_module :  Register Base Length %d\n", DRIVER_MODULE_NAME, (unsigned int)gRegisterBaseLength);
-	
-	/**
-	  Remap the I/O register block so that it can be safely accessed.
-	  I/O register block starts at gBaseHdwrIR and is 32 bytes long.
-	  It is cast to char because that is the way Linus does it.
-	  Reference "/usr/src/Linux-2.4/Documentation/IO-mapping.txt".
-	 */
-	gVirtualRegisterBaseAddress = pci_iomap(gPCIeDevice, 0, gRegisterBaseLength);
-	if (!gVirtualRegisterBaseAddress)
-	{
-		printk(KERN_WARNING"%s: skarabveth_init_module : PCIe could not remap memory.\n", DRIVER_MODULE_NAME);
-		return (ERROR);
-	} 
-	
-	/**
-	  Print out the aquired virtual base addresss
-	 */
-	printk(KERN_ERR"%s: skarabveth_init_module: Virt HW address %p\n", DRIVER_MODULE_NAME, gVirtualRegisterBaseAddress);
-
-	/**
-	  Get IRQ from pci_dev structure. It may have been remapped 
-	  by the kernel, and this value will be the correct one.
-	 */
-	gPCIeIrq = gPCIeDevice->irq;
-	printk(KERN_ALERT"%s: skarabveth_init_module: PCIe Device IRQ: %X\n",DRIVER_MODULE_NAME, gPCIeIrq);
-
-	/**---START: Initialize Hardware */
-
-	/**
-	  Try to gain exclusive control of memory for demo hardware.
-	 */
-	request_mem_region(gHwRegisterBaseAddress, BAR_APPERTURE_SIZE, "kutlengvdmadrv-xdma");
-	/**
-	  Update flags
-	 */
-
-	gStatFlags = gStatFlags | HAVE_MEM_REGION;
-	
-	printk(KERN_ALERT"%s: skarabveth_init_module: Initialize Hardware Done..\n",DRIVER_MODULE_NAME);
-	
-	/**
-	  Request IRQ from OS.
-	  In past architectures, the SHARED and SAMPLE_RANDOM flags 
-	  were called: SA_SHIRQ and SA_SAMPLE_RANDOM respectively.
-	  In older Fedora core installations, the request arguments may
-	  need to be reverted back. SA_SHIRQ | SA_SAMPLE_RANDOM
-	 */
-	printk(KERN_INFO"%s: ISR Setup..\n", DRIVER_MODULE_NAME);
-
-	result = pci_enable_msi(gPCIeDevice);
-
-	if (0 > result) 
-	{
-		printk(KERN_ERR"%s: skarabveth_init_module: Unable to initialise MSI IRQ",DRIVER_MODULE_NAME);
-		printk(KERN_ERR"%s: skarabveth_init_module: Allocating legacy shared IRQ",DRIVER_MODULE_NAME);
-
-		result = request_irq(gPCIeIrq,skarabveth_irq_handler , IRQF_SHARED , DRIVER_MODULE_NAME"-XDMA-SHR-Intr", gPCIeDevice);
-
-		if (0 > result)
-		{
-			printk(KERN_ERR"%s: skarabveth_init_module: Unable to allocate legacy shared IRQ",DRIVER_MODULE_NAME);
-		}else
-		{
-
-
-		   /**
-			 Update flags stating IRQ was successfully obtained
-			*/
-			printk(KERN_ERR"%s: skarabveth_init_module: Allocated legacy shared IR IRQ",DRIVER_MODULE_NAME);
-			gStatFlags = gStatFlags | HAVE_IRQ;
-		}
-
-	}else
-	{
-		
-	
-	   /**
-		 Update MSI enable was successful
-		*/
-		printk(KERN_ERR"%s: skarabveth_init_module: Enabled N MSI IRQ Vectors",DRIVER_MODULE_NAME);
-		gStatFlags = gStatFlags | HAVE_MSI_IRQ;
-
-		result = request_irq(gPCIeDevice->irq, skarabveth_irq_msi_handler, 0 , DRIVER_MODULE_NAME"-XDMA-MSI_N-Intr", gPCIeDevice);
-
-		if (0 > result)
-		{
-			printk(KERN_ERR"%s: skarabveth_init_module: Unable to allocate MSI_N_IRQ",DRIVER_MODULE_NAME);
-		}else
-		{
-
-
-		   /**
-			 Update flags stating IRQ was successfully obtained
-			*/
-			printk(KERN_ERR"%s: skarabveth_init_module: Allocated MSI_N_IRQ",DRIVER_MODULE_NAME);
-			gStatFlags = gStatFlags | HAVE_MSI_N_IRQ;
-		}
-
-	}
-	
-	pci_set_master(gPCIeDevice);
-	{
-		printk(KERN_ERR"%s: skarabveth_init_module: PCIe Device Bus Mastering set.\n", DRIVER_MODULE_NAME);
-	}
-	
+		printk(KERN_ERR"skarabveth:pci_register_driver Error %d  initializing card skarabveth card",result);		
+		return result;
+	}	
 	/** 
 	 Allocate the netdev structure in memory	  
 	 */
@@ -617,45 +629,11 @@ int skarabveth_init_module (void)
  */
 void skarabveth_cleanup (void)
 {
-	/**
-	  Check if we have a memory region and free it
-	 */	 
-	
-	if (gStatFlags & HAVE_MEM_REGION)
-	{
-		(void) release_mem_region(gHwRegisterBaseAddress, BAR_APPERTURE_SIZE);
-	}
-	
-    /**
-      Check if we have an MSI IRQs and free it
-     */
-    if (gStatFlags & HAVE_MSI_IRQ)
-    {
-    	if (gStatFlags & HAVE_MSI_N_IRQ)  (void) free_irq(gPCIeDevice->irq, gPCIeDevice);
-    	pci_disable_msi(gPCIeDevice);
-    }
-	
-    /**
-      Check if we have an IRQ and free it
-     */
-    if (gStatFlags & HAVE_IRQ)
-    {
-        (void) free_irq(gPCIeIrq, gPCIeDevice);
-    }
-	
-    /**
-      Free up memory pointed to by virtual address
-     */	
-    if (gVirtualRegisterBaseAddress != NULL)
-    {
-        iounmap(gVirtualRegisterBaseAddress);
-    }
-    
-    gVirtualRegisterBaseAddress = NULL;
 
     gStatFlags = 0;	
 	printk(KERN_WARNING"Cleaning Up the Module\n");
-	unregister_netdev (skarabveth);
+	pci_unregister_driver(&xilinx_dma_pci_driver);
+	unregister_netdev(skarabveth);
 	free_netdev(skarabveth);
 	return;
 }
