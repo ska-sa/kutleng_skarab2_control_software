@@ -1,0 +1,132 @@
+07:32:49 **** Build of project vcu118platform ****
+buildplatform.sh 46673 vcu118platform  
+XSDB Server Channel: tcfchan#1
+Building the BSP Library for domain  - standalone_domain on processor microblaze_0
+Running Make include in microblaze_0/libsrc/tmrctr_v4_5/src
+
+make -C microblaze_0/libsrc/tmrctr_v4_5/src -s include  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" "C
+OMPILER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_FLA
+GS=-g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Running Make include in microblaze_0/libsrc/wdttb_v4_5/src
+
+make -C microblaze_0/libsrc/wdttb_v4_5/src -s include  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" "CO
+MPILER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_FLAG
+S=-g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Running Make include in microblaze_0/libsrc/ethernetcore_mm_v1_0/src
+
+make -C microblaze_0/libsrc/ethernetcore_mm_v1_0/src -s include  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=
+mb-ar" "COMPILER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COM
+PILER_FLAGS=-g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Running Make include in microblaze_0/libsrc/uartlite_v3_3/src
+
+make -C microblaze_0/libsrc/uartlite_v3_3/src -s include  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" 
+"COMPILER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_F
+LAGS=-g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Running Make include in microblaze_0/libsrc/bram_v4_3/src
+
+make -C microblaze_0/libsrc/bram_v4_3/src -s include  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" "COM
+PILER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_FLAGS
+=-g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Running Make include in microblaze_0/libsrc/standalone_v7_1/src
+
+make -C microblaze_0/libsrc/standalone_v7_1/src -s include  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar
+" "COMPILER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER
+_FLAGS=-g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Running Make include in microblaze_0/libsrc/cpu_v2_10/src
+
+make -C microblaze_0/libsrc/cpu_v2_10/src -s include  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" "COM
+PILER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_FLAGS
+=-g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Running Make include in microblaze_0/libsrc/intc_v3_10/src
+
+make -C microblaze_0/libsrc/intc_v3_10/src -s include  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" "CO
+MPILER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_FLAG
+S=-g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Running Make libs in microblaze_0/libsrc/tmrctr_v4_5/src
+
+make -C microblaze_0/libsrc/tmrctr_v4_5/src -s libs  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" "COMP
+ILER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_FLAGS=
+-g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Compiling tmrctr
+
+mb-ar: creating ../../../lib/libxil.a
+Running Make libs in microblaze_0/libsrc/wdttb_v4_5/src
+
+make -C microblaze_0/libsrc/wdttb_v4_5/src -s libs  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" "COMPI
+LER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_FLAGS=-
+g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Compiling wdttb
+
+Running Make libs in microblaze_0/libsrc/ethernetcore_mm_v1_0/src
+
+make -C microblaze_0/libsrc/ethernetcore_mm_v1_0/src -s libs  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-
+ar" "COMPILER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPIL
+ER_FLAGS=-g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Compiling ethernetcore_mm...
+
+ethernetcore_mm_selftest.c: In function 'ETHERNETCORE_MM_Reg_SelfTest':
+ethernetcore_mm_selftest.c:52:64: warning: comparison of integer expressions of different signedness: 'u32' {aka 'long unsigned int'} and 'int' [-Wsign-compare]
+    if ( ETHERNETCORE_MM_mReadReg (baseaddr, read_loop_index*4) != (read_loop_index+1)*READ_WRITE_MUL_FACTOR){
+                                                                ^~
+ethernetcore_mm_selftest.c:36:6: warning: unused variable 'Index' [-Wunused-variable]
+  int Index;
+      ^~~~~
+Running Make libs in microblaze_0/libsrc/uartlite_v3_3/src
+
+make -C microblaze_0/libsrc/uartlite_v3_3/src -s libs  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" "CO
+MPILER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_FLAG
+S=-g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Compiling uartlite
+
+Running Make libs in microblaze_0/libsrc/bram_v4_3/src
+
+make -C microblaze_0/libsrc/bram_v4_3/src -s libs  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" "COMPIL
+ER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_FLAGS=-g
+ -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Compiling bram
+
+Running Make libs in microblaze_0/libsrc/standalone_v7_1/src
+
+make -C microblaze_0/libsrc/standalone_v7_1/src -s libs  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" "
+COMPILER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_FL
+AGS=-g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Compiling standalone
+
+microblaze_sleep.c:75:9: note: #pragma message: For the sleep routines, assembly instructions are used
+ #pragma message ("For the sleep routines, assembly instructions are used")
+         ^~~~~~~
+Running Make libs in microblaze_0/libsrc/cpu_v2_10/src
+
+make -C microblaze_0/libsrc/cpu_v2_10/src -s libs  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" "COMPIL
+ER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_FLAGS=-g
+ -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Compiling cpu
+
+Running Make libs in microblaze_0/libsrc/intc_v3_10/src
+
+make -C microblaze_0/libsrc/intc_v3_10/src -s libs  "SHELL=/bin/sh" "COMPILER=mb-gcc" "ASSEMBLER=mb-as" "ARCHIVER=mb-ar" "COMPI
+LER_FLAGS=  -O2 -c -mcpu=v11.0 -mlittle-endian -mno-xl-soft-mul -mxl-barrel-shift -mxl-pattern-compare" "EXTRA_COMPILER_FLAGS=-
+g -ffunction-sections -fdata-sections -Wall -Wextra"
+
+Compiling intc
+
+Finished building libraries
+
+
+07:32:56 Build Finished (took 7s.186ms)
+
