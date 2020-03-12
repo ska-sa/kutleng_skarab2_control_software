@@ -8,7 +8,7 @@ CFLAGS  =-Wall
 #files to link:
   
 # the name to use for both the target source file, and the output file:
-TARGET = ethbwtest
+TARGET = testfilegen
 
 all: $(TARGET)
   
