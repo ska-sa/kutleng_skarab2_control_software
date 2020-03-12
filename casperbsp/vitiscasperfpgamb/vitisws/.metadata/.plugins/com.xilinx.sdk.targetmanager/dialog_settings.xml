@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="false" key="testharness-skip_rev_check"/>
+	<item value="Auto Detect" key="testharness-device"/>
+	<item value="Local" key="testharness-target"/>
+	<item value="false" key="testharness-partial_bit"/>
+	<item value="_ide/bitstream/gmactop.bit" key="testharness-bitFile"/>
+	<item value="testharness" key="programfpga.sdxproject"/>
+	<item value="bootloop" key="testharness-microblaze_0-initElf"/>
+	<item value="_ide/bitstream/gmactop.mmi" key="testharness-bmmFile"/>
+</section>

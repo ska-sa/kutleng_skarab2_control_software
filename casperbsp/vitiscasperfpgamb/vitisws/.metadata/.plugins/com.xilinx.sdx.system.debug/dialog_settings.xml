@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="testharness_system" key="programflash.hwplatform"/>
+	<item value="" key="testharness_system-imgFile"/>
+	<item value="Local" key="testharness_system-target"/>
+	<item value="false" key="testharness_system-verifyFlash"/>
+	<item value="28f00am29ew-bpi-x16" key="testharness_system-flashType"/>
+	<item value="" key="testharness_system-offSet"/>
+	<item value="" key="testharness_system-fsblFile"/>
+	<item value="false" key="testharness_system-blankCheck"/>
+	<item value="Auto Detect" key="testharness_system-device"/>
+</section>

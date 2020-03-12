@@ -1,0 +1,20 @@
+Nothing to build in platform 'vcu118prplatform'
+
+08:47:18 **** Incremental Build of configuration Debug for project testharness ****
+make all 
+Building file: ../src/ethmacdriver_l.c
+Invoking: MicroBlaze gcc compiler
+mb-gcc -Wall -O0 -g3 -c -fmessage-length=0 -MT"src/ethmacdriver_l.o" -I/home/hectorh/Documents/projects/sarao/skarab2/kutlengrepo/kutleng_skarab2_control_software/casperbsp/vitiscasperfpgamb/vitisws/vcu118prplatform/export/vcu118prplatform/sw/vcu118prplatform/standalone_domain/bspinclude/include -mlittle-endian -mxl-barrel-shift -mxl-pattern-compare -mcpu=v11.0 -mno-xl-soft-mul -Wl,--no-relax -ffunction-sections -fdata-sections -MMD -MP -MF"src/ethmacdriver_l.d" -MT"src/ethmacdriver_l.o" -o "src/ethmacdriver_l.o" "../src/ethmacdriver_l.c"
+Finished building: ../src/ethmacdriver_l.c
+ 
+Building target: testharness.elf
+Invoking: MicroBlaze gcc linker
+mb-gcc -Wl,-T -Wl,../src/lscript.ld -L/home/hectorh/Documents/projects/sarao/skarab2/kutlengrepo/kutleng_skarab2_control_software/casperbsp/vitiscasperfpgamb/vitisws/vcu118prplatform/export/vcu118prplatform/sw/vcu118prplatform/standalone_domain/bsplib/lib -mlittle-endian -mxl-barrel-shift -mxl-pattern-compare -mcpu=v11.0 -mno-xl-soft-mul -Wl,--no-relax -Wl,--gc-sections -o "testharness.elf"  ./src/ethmacdriver_l.o ./src/platform.o ./src/testharness.o   -Wl,--start-group,-lxil,-lgcc,-lc,--end-group
+Finished building target: testharness.elf
+ 
+Invoking: MicroBlaze Print Size
+mb-size testharness.elf  |tee "testharness.elf.size"
+   text	   data	    bss	    dec	    hex	filename
+  15696	    784	   3104	  19584	   4c80	testharness.elf
+Finished building: testharness.elf.size
+ 
