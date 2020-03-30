@@ -1063,31 +1063,34 @@ u64 XGMAC_ReadARPCacheEntry(UINTPTR BaseAddress,u16 ARPEntryOffset);
 *
 * This function gets a raw Ethernet frame from the current packet receive slot.
 *
-* @param	BaseAddress is the base address of the device
-* 			PacketBuffer is the pointer to the receive data array.
+* @param	BufferBaseAddress is the buffer base address of the device
+* @param	RegisterBaseAddress is the register base address of the device
+* @param	PacketBuffer is the pointer to the receive data array to hold
+* 			the Ethernet frame. It must be minimum MTU (1522|2048) bytes deep.
 * @return	ReceiveStatus Number of raw bytes received
 *
 * @note		The data frame received will contain all Ethernet data except the
 * 			Ethernet FCS which the CMAC will strip.
 *
 ******************************************************************************/
-u32 XGMAC_GetEthernetPacket(UINTPTR BaseAddress,u8 *PacketBuffer);
+u32 XGMAC_GetEthernetPacket(UINTPTR BufferBaseAddress,UINTPTR RegisterBaseAddress,u8 *PacketBuffer);
 /****************************************************************************/
 /**
 *
 * This function gets a raw Ethernet frame from the current packet receive slot.
 *
-* @param	BaseAddress is the base address of the device
-* 			PacketBuffer is the pointer to the transmit data array holding
+* @param	BufferBaseAddress is the buffer base address of the device
+* @param	RegisterBaseAddress is the register base address of the device
+* @param	PacketBuffer is the pointer to the transmit data array holding
 * 			the Ethernet frame.
-* 			PacketNumberOfBytes the length of the Ethernet frame in bytes
+* @param	PacketNumberOfBytes the length of the Ethernet frame in bytes
 * @return	SendStatus Number of raw bytes sent
 *
 * @note		The frame data sent must contain all data on an raw Ethernet frame
 * 			but must omit the Ethernet FCS and the CMAC will insert the FCS.
 *
 ******************************************************************************/
-u32 XGMAC_SendEthernetPacket(UINTPTR BaseAddress,const u8 *PacketBuffer,const u32 PacketNumberOfBytes);
+u32 XGMAC_SendEthernetPacket(UINTPTR BufferBaseAddress,UINTPTR RegisterBaseAddress,const u8 *PacketBuffer,const u32 PacketNumberOfBytes);
 
 #ifdef __cplusplus
 }

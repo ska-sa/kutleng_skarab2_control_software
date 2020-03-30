@@ -425,12 +425,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ga83b77e2f08d8b6d4013452d05570fdd1"><td class="memItemLeft" align="right" valign="top">u64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ethernetxgmac__v1__0.html#ga83b77e2f08d8b6d4013452d05570fdd1">XGMAC_ReadARPCacheEntry</a> (UINTPTR BaseAddress, u16 ARPEntryOffset)</td></tr>
 <tr class="memdesc:ga83b77e2f08d8b6d4013452d05570fdd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function gets the cpu receive slot status.  <a href="#ga83b77e2f08d8b6d4013452d05570fdd1">More...</a><br /></td></tr>
 <tr class="separator:ga83b77e2f08d8b6d4013452d05570fdd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab130191149857d971234595992da6fdd"><td class="memItemLeft" align="right" valign="top">u32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ethernetxgmac__v1__0.html#gab130191149857d971234595992da6fdd">XGMAC_GetEthernetPacket</a> (UINTPTR BaseAddress, u8 *PacketBuffer)</td></tr>
-<tr class="memdesc:gab130191149857d971234595992da6fdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function gets a raw Ethernet frame from the current packet receive slot.  <a href="#gab130191149857d971234595992da6fdd">More...</a><br /></td></tr>
-<tr class="separator:gab130191149857d971234595992da6fdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7e0d80e0c40395befc85c8d7489dd1c9"><td class="memItemLeft" align="right" valign="top">u32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ethernetxgmac__v1__0.html#ga7e0d80e0c40395befc85c8d7489dd1c9">XGMAC_SendEthernetPacket</a> (UINTPTR BaseAddress, const u8 *PacketBuffer, const u32 PacketNumberOfBytes)</td></tr>
-<tr class="memdesc:ga7e0d80e0c40395befc85c8d7489dd1c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function gets a raw Ethernet frame from the current packet receive slot.  <a href="#ga7e0d80e0c40395befc85c8d7489dd1c9">More...</a><br /></td></tr>
-<tr class="separator:ga7e0d80e0c40395befc85c8d7489dd1c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5b8a2e6b9d01de891264d8dea24c31c7"><td class="memItemLeft" align="right" valign="top">u32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ethernetxgmac__v1__0.html#ga5b8a2e6b9d01de891264d8dea24c31c7">XGMAC_GetEthernetPacket</a> (UINTPTR BufferBaseAddress, UINTPTR RegisterBaseAddress, u8 *PacketBuffer)</td></tr>
+<tr class="memdesc:ga5b8a2e6b9d01de891264d8dea24c31c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function gets a raw Ethernet frame from the current packet receive slot.  <a href="#ga5b8a2e6b9d01de891264d8dea24c31c7">More...</a><br /></td></tr>
+<tr class="separator:ga5b8a2e6b9d01de891264d8dea24c31c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4a12d58e46f43494dee30b8bacf4666b"><td class="memItemLeft" align="right" valign="top">u32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ethernetxgmac__v1__0.html#ga4a12d58e46f43494dee30b8bacf4666b">XGMAC_SendEthernetPacket</a> (UINTPTR BufferBaseAddress, UINTPTR RegisterBaseAddress, const u8 *PacketBuffer, const u32 PacketNumberOfBytes)</td></tr>
+<tr class="memdesc:ga4a12d58e46f43494dee30b8bacf4666b"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function gets a raw Ethernet frame from the current packet receive slot.  <a href="#ga4a12d58e46f43494dee30b8bacf4666b">More...</a><br /></td></tr>
+<tr class="separator:ga4a12d58e46f43494dee30b8bacf4666b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>This header file contains identifiers and low-level driver functions/macros that can be used to access the device. </p>
@@ -706,8 +706,8 @@ MODIFICATION HISTORY:</pre><pre>Ver     Who         Date     Changes
 
 </div>
 </div>
-<a id="gab130191149857d971234595992da6fdd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab130191149857d971234595992da6fdd">&#9670;&nbsp;</a></span>XGMAC_GetEthernetPacket()</h2>
+<a id="ga5b8a2e6b9d01de891264d8dea24c31c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5b8a2e6b9d01de891264d8dea24c31c7">&#9670;&nbsp;</a></span>XGMAC_GetEthernetPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -716,7 +716,13 @@ MODIFICATION HISTORY:</pre><pre>Ver     Who         Date     Changes
           <td class="memname">u32 XGMAC_GetEthernetPacket </td>
           <td>(</td>
           <td class="paramtype">UINTPTR&#160;</td>
-          <td class="paramname"><em>BaseAddress</em>, </td>
+          <td class="paramname"><em>BufferBaseAddress</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">UINTPTR&#160;</td>
+          <td class="paramname"><em>RegisterBaseAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -735,7 +741,9 @@ MODIFICATION HISTORY:</pre><pre>Ver     Who         Date     Changes
 <p>This function gets a raw Ethernet frame from the current packet receive slot. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">BaseAddress</td><td>is the base address of the device PacketBuffer is the pointer to the receive data array. </td></tr>
+    <tr><td class="paramname">BufferBaseAddress</td><td>is the buffer base address of the device </td></tr>
+    <tr><td class="paramname">RegisterBaseAddress</td><td>is the register base address of the device </td></tr>
+    <tr><td class="paramname">PacketBuffer</td><td>is the pointer to the receive data array to hold the Ethernet frame. It must be minimum MTU (1522|2048) bytes deep. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1737,8 +1745,8 @@ MODIFICATION HISTORY:</pre><pre>Ver     Who         Date     Changes
 
 </div>
 </div>
-<a id="ga7e0d80e0c40395befc85c8d7489dd1c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7e0d80e0c40395befc85c8d7489dd1c9">&#9670;&nbsp;</a></span>XGMAC_SendEthernetPacket()</h2>
+<a id="ga4a12d58e46f43494dee30b8bacf4666b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4a12d58e46f43494dee30b8bacf4666b">&#9670;&nbsp;</a></span>XGMAC_SendEthernetPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1747,7 +1755,13 @@ MODIFICATION HISTORY:</pre><pre>Ver     Who         Date     Changes
           <td class="memname">u32 XGMAC_SendEthernetPacket </td>
           <td>(</td>
           <td class="paramtype">UINTPTR&#160;</td>
-          <td class="paramname"><em>BaseAddress</em>, </td>
+          <td class="paramname"><em>BufferBaseAddress</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">UINTPTR&#160;</td>
+          <td class="paramname"><em>RegisterBaseAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1772,7 +1786,10 @@ MODIFICATION HISTORY:</pre><pre>Ver     Who         Date     Changes
 <p>This function gets a raw Ethernet frame from the current packet receive slot. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">BaseAddress</td><td>is the base address of the device PacketBuffer is the pointer to the transmit data array holding the Ethernet frame. PacketNumberOfBytes the length of the Ethernet frame in bytes </td></tr>
+    <tr><td class="paramname">BufferBaseAddress</td><td>is the buffer base address of the device </td></tr>
+    <tr><td class="paramname">RegisterBaseAddress</td><td>is the register base address of the device </td></tr>
+    <tr><td class="paramname">PacketBuffer</td><td>is the pointer to the transmit data array holding the Ethernet frame. </td></tr>
+    <tr><td class="paramname">PacketNumberOfBytes</td><td>the length of the Ethernet frame in bytes </td></tr>
   </table>
   </dd>
 </dl>
