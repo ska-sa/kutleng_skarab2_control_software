@@ -51,3 +51,6 @@ You should see packets from size 1 till the MTU size defined in the udplinktestc
 10. Change udplinktestclient.c to a different target IP to test the other QSFP port.
 
 
+The API for the CPU interface is documented in:
+
+[CPU API for Memory mapped Interface](https://github.com/hectorkutleng/kutleng_skarab2_control_software/casperbsp/vitiscasperfpgamb/vitisws/testharness/html/index.html)
