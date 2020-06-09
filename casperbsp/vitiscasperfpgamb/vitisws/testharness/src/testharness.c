@@ -50,14 +50,23 @@
 #include "xil_printf.h"
 #include "ethmacdriver_l.h"
 
+const u8 DataPacket[60]=
+{
+0x98,0x03,0x9b,0xa3,0x1e,0x89,0x00,0x0a,0x35,0x02,0x41,0x92,0x08,0x06,0x00,
+0x01,0x08,0x00,0x06,0x04,0x00,0x02,0x00,0x0a,0x35,0x02,0x41,0x92,0xc0,0xa8,
+0x64,0x0a,0x98,0x03,0x9b,0xa3,0x1e,0x89,0xc0,0xa8,0x64,0x96,0x00,0x00,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
+};
+
+
 int main()
 {
 	u64 U64Data;
 	u64 MACAddress;
 	u32 U32Data;
-	u16 U16Data,u16Var;
+	u16 U16Data; //,u16Var;
+	u8 RxPacketBuffer[2048];
     init_platform();
-
     /* Test Enable/Disable API*/
     /* Enable the device by setting register 10 bit 0. */
     XGMAC_EnableXGMAC(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
@@ -293,7 +302,17 @@ int main()
     /* End Test Statistics Reset  API*/
     XGMAC_EnableXGMAC(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR);
     xil_printf("running data receive\n\r");
-
+    /* Test Ethernet Packet Transmit and Receive using CPU.*/
+    for(U16Data=0;U16Data<32;U16Data++)
+    {
+    	XGMAC_SendEthernetPacket(XPAR_ETHERNETCORE_MM_0_S01_AXI_BASEADDR,XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR,DataPacket,60);
+    	if(XGMAC_GetRXSlotStatus(XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR))
+    	{
+    		U32Data=XGMAC_GetEthernetPacket(XPAR_ETHERNETCORE_MM_0_S02_AXI_BASEADDR,XPAR_ETHERNETCORE_MM_0_S00_AXI_BASEADDR,RxPacketBuffer);
+    	    xil_printf("XGMAC_GetEthernetPacket - Received Packet Length=%d\n\r",U32Data);
+    	    xil_printf("XGMAC_GetEthernetPacket - A value > 2047 is an error\n\r");
+    	}
+    }
     cleanup_platform();
     return 0;
 }

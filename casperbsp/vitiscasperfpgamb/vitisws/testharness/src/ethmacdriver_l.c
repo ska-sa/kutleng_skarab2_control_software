@@ -703,12 +703,12 @@ u64 XGMAC_GetMACAddress(UINTPTR BaseAddress)
 * This function set the 100GMAC MAC address register
 *
 * @param	BaseAddress is the base address of the device
-* On RTOS based systems there must be a barrier between the register read and
-* the register write to make this an atomic read modify operation to prevent
-* sequential data coupling.
+* @param	MACAddress is the 48bit Ethernet MAC address
+* @note		On RTOS based systems there must be a barrier between the register read and
+* 			the register write to make this an atomic read modify operation to prevent
+* 			sequential data coupling.
 * @return	None.
 *
-* @note		None.
 *
 ******************************************************************************/
 void XGMAC_SetMACAddress(UINTPTR BaseAddress,u64 MACAddress)
@@ -726,6 +726,7 @@ void XGMAC_SetMACAddress(UINTPTR BaseAddress,u64 MACAddress)
 * This function set the 100GMAC IP address register
 *
 * @param	BaseAddress is the base address of the device
+* @param	IPAddress is the local IP address for the Ethernet Device
 *
 * @return	None.
 *
@@ -762,6 +763,7 @@ u32 XGMAC_GetLocalIPAddress(UINTPTR BaseAddress)
 * This function set the 100GMAC Gateway IP address register
 *
 * @param	BaseAddress is the base address of the device
+* @param	IPAddress is the local gateway IP address for the Ethernet Device
 *
 * @return	None.
 *
@@ -799,7 +801,7 @@ u32 XGMAC_GetGatewayIPAddress(UINTPTR BaseAddress)
 * This function set the 100GMAC Multicast IP address register
 *
 * @param	BaseAddress is the base address of the device
-*
+* @param	IPAddress is the Multicast Group IP address for the Ethernet Device
 * @return	None.
 *
 * @note		None.
@@ -835,7 +837,7 @@ u32 XGMAC_GetMulticastIPAddress(UINTPTR BaseAddress)
 * This function set the 100GMAC Multicast IP Netmask address register
 *
 * @param	BaseAddress is the base address of the device
-*
+* @param	IPAddressMask is the Multicast Group IP Netmask for the Ethernet Device
 * @return	None.
 *
 * @note		None.
@@ -893,13 +895,12 @@ u16 XGMAC_GetUDPPort(UINTPTR BaseAddress)
 * This function set the 100GMAC UDP Port address register
 *
 * @param	BaseAddress is the base address of the device
-* 			UDPPort is the base port to be written to the register
-* On RTOS based systems there must be a barrier between the register read and
-* the register write to make this an atomic read modify operation to prevent
-* sequential data coupling.
+* @param	UDPPort is the base port to be written to the register
+* @note		On RTOS based systems there must be a barrier between the register read and
+* 			the register write to make this an atomic read modify operation to prevent
+* 			sequential data coupling.
 * @return	None.
 *
-* @note		None.
 *
 ******************************************************************************/
 void XGMAC_SetUDPPort(UINTPTR BaseAddress,u16 UDPPort)
@@ -942,13 +943,12 @@ u16 XGMAC_GetUDPPortMask(UINTPTR BaseAddress)
 * This function set the 100GMAC UDP Port mask address register
 *
 * @param	BaseAddress is the base address of the device
-* 			UDPPort is the base port to be written to the register
-* On RTOS based systems there must be a barrier between the register read and
-* the register write to make this an atomic read modify operation to prevent
-* sequential data coupling.
+* @param	UDPPort is the base port to be written to the register
+* @note		On RTOS based systems there must be a barrier between the register read and
+* 			the register write to make this an atomic read modify operation to prevent
+* 			sequential data coupling.
 * @return	None.
 *
-* @note		None.
 *
 ******************************************************************************/
 void XGMAC_SetUDPPortMask(UINTPTR BaseAddress,u16 UDPPort)
@@ -969,7 +969,7 @@ void XGMAC_SetUDPPortMask(UINTPTR BaseAddress,u16 UDPPort)
 * This function set the 100GMAC PHY High register
 *
 * @param	BaseAddress is the base address of the device
-*           PHYHigh is the PHY High register values
+* @param	PHYHigh is the PHY High register values
 *
 * @return	None.
 *
@@ -987,7 +987,7 @@ void XGMAC_WritePHYControlH(UINTPTR BaseAddress,u32 PHYHigh)
 * This function set the 100GMAC PHY Low register
 *
 * @param	BaseAddress is the base address of the device
-*           PHYHigh is the PHY Low register values
+* @param	PHYLow is the PHY Low register values
 *
 * @return	None.
 *
@@ -1005,13 +1005,12 @@ void XGMAC_WritePHYControlL(UINTPTR BaseAddress,u32 PHYLow)
 * This function set the cpu transmit slot id.
 *
 * @param	BaseAddress is the base address of the device
-* 			SlotID is the slot id to set
-* On RTOS based systems there must be a barrier between the register read and
-* the register write to make this an atomic read modify operation to prevent
-* sequential data coupling.
+* @param	SlotID is the slot id to set
+* @note		On RTOS based systems there must be a barrier between the register read and
+* 			the register write to make this an atomic read modify operation to prevent
+* 			sequential data coupling.
 * @return	None.
 *
-* @note		None.
 *
 ******************************************************************************/
 void XGMAC_SetTXSlotID(UINTPTR BaseAddress,u16 SlotID)
@@ -1055,13 +1054,11 @@ u16 XGMAC_GetTXSlotID(UINTPTR BaseAddress)
 * This function set the cpu receive slot id.
 *
 * @param	BaseAddress is the base address of the device
-* 			SlotID is the slot id to set
-* On RTOS based systems there must be a barrier between the register read and
-* the register write to make this an atomic read modify operation to prevent
-* sequential data coupling.
+* @param	SlotID is the slot id to set
+* @note		On RTOS based systems there must be a barrier between the register read and
+* 			the register write to make this an atomic read modify operation to prevent
+* 			sequential data coupling.
 * @return	None.
-*
-* @note		None.
 *
 ******************************************************************************/
 void XGMAC_SetRXSlotID(UINTPTR BaseAddress,u16 SlotID)
@@ -1105,13 +1102,11 @@ u16 XGMAC_GetRXSlotID(UINTPTR BaseAddress)
 * This function set the cpu transmit slot.
 *
 * @param	BaseAddress is the base address of the device
-* 			SlotID is the slot id to set
-* On RTOS based systems there must be a barrier between the register read and
-* the register write to make this an atomic read modify operation to prevent
-* sequential data coupling.
+* @note		 On RTOS based systems there must be a barrier between the register read and
+* 			the register write to make this an atomic read modify operation to prevent
+* 			sequential data coupling.
 * @return	None.
 *
-* @note		None.
 *
 ******************************************************************************/
 void XGMAC_TXSlotSet(UINTPTR BaseAddress)
@@ -1134,13 +1129,11 @@ void XGMAC_TXSlotSet(UINTPTR BaseAddress)
 * This function clear the cpu receive slot.
 *
 * @param	BaseAddress is the base address of the device
-* 			SlotID is the slot id to set
-* On RTOS based systems there must be a barrier between the register read and
-* the register write to make this an atomic read modify operation to prevent
-* sequential data coupling.
+* @note		 On RTOS based systems there must be a barrier between the register read and
+* 			the register write to make this an atomic read modify operation to prevent
+* 			sequential data coupling.
 * @return	None.
 *
-* @note		None.
 *
 ******************************************************************************/
 void XGMAC_RXSlotClear(UINTPTR BaseAddress)
@@ -1148,10 +1141,10 @@ void XGMAC_RXSlotClear(UINTPTR BaseAddress)
 	volatile u32 lVar;
 	/* Place a barrier here. */
 	lVar=XGMAC_ReadReg(BaseAddress,XUL_RING_BUFFER_SLOTS_REG_OFFSET);
-	/* Set the slot set signal high. */
+	/* Set the slot clear signal high. */
 	lVar|=0x00000010;
 	XGMAC_WriteReg(BaseAddress, XUL_RING_BUFFER_SLOTS_REG_OFFSET, lVar);
-	/* Set the slot set signal low. */
+	/* Set the slot clear signal low. */
 	lVar&=0xFFFFFFEF;
 	XGMAC_WriteReg(BaseAddress, XUL_RING_BUFFER_SLOTS_REG_OFFSET, lVar);
 	/* Remove barrier here. */
@@ -1237,10 +1230,10 @@ u32 XGMAC_GetRXSlotStatus(UINTPTR BaseAddress)
 * This function gets the cpu receive slot status.
 *
 * @param	BaseAddress is the base address of the device
-* 			ARPEntryOffset is the offset of the ARP entry taken from the IP Address
+* @param	ARPEntryOffset is the offset of the ARP entry taken from the IP Address
 * 			e.g. 192.168.0.14 (For 0x00E is the ARP Entry Offset)
 * 			for multicast addresses the top bit is set e.g. 224.168.0.14 = 0x10E
-* 			MACAddress is the MAC address to be inserted into the table
+* @param	MACAddress is the MAC address to be inserted into the table
 * @return	None.
 *
 * @note		None.
@@ -1266,7 +1259,7 @@ void XGMAC_WriteARPCacheEntry(UINTPTR BaseAddress,u16 ARPEntryOffset,u64 MACAddr
 * This function gets the cpu receive slot status.
 *
 * @param	BaseAddress is the base address of the device
-* 			ARPEntryOffset is the offset of the ARP entry taken from the IP Address
+* @param	ARPEntryOffset is the offset of the ARP entry taken from the IP Address
 * 			e.g. 192.168.0.14 (For 0x00E is the ARP Entry Offset)
 * 			for multicast addresses the top bit is set e.g. 224.168.0.14 = 0x10E
 * @return	MACAddress contained on the ARP Entry Offset
@@ -1292,6 +1285,95 @@ u64 XGMAC_ReadARPCacheEntry(UINTPTR BaseAddress,u16 ARPEntryOffset)
 	lMACAddress |= (u64)(lDataLow&0x00000000FFFFFFFF);
 	return (lMACAddress&0x0000FFFFFFFFFFFF);
 }
+/****************************************************************************/
+/**
+*
+* This function gets a raw Ethernet frame from the current packet receive slot.
+*
+* @param	BufferBaseAddress is the buffer base address of the device
+* @param	RegisterBaseAddress is the register base address of the device
+* @param	PacketBuffer is the pointer to the receive data array to hold
+* 			the Ethernet frame. It must be minimum MTU (1522|2048) bytes deep.
+* @return	ReceiveStatus Number of raw bytes received
+*
+* @note		The data frame received will contain all Ethernet data except the
+* 			Ethernet FCS which the CMAC will strip.
+*
+******************************************************************************/
+u32 XGMAC_GetEthernetPacket(UINTPTR BufferBaseAddress,UINTPTR RegisterBaseAddress,u8 *PacketBuffer)
+{
+	u32 lVar;
+	u16 lSlotID;
+	u32 lLength=0;
 
+	for(unsigned int i=0;i<2048;i++)
+	{
+		lVar = XGMAC_ReadReg(BufferBaseAddress,(i<<2));
+		PacketBuffer[i] = (lVar & 0x000000ff);
+
+		if(lVar&0x00000100)
+		{
+			/** This is the last byte of the packet **/
+			/** Terminate the loop. **/
+			lLength = i;
+			break;
+		}
+	}
+
+	/** Get the current receive slot. **/
+	lSlotID=XGMAC_GetRXSlotID(RegisterBaseAddress);
+	/** Clear the current receive slot. **/
+	XGMAC_RXSlotClear(RegisterBaseAddress);
+	/** Set the current receive slot. **/
+	XGMAC_SetRXSlotID(RegisterBaseAddress,++lSlotID);
+	/** Return the number of bytes transmitted. **/
+	return lLength;
+
+}
+
+/****************************************************************************/
+/**
+*
+* This function gets a raw Ethernet frame from the current packet receive slot.
+*
+* @param	BufferBaseAddress is the buffer base address of the device
+* @param	RegisterBaseAddress is the register base address of the device
+* @param	PacketBuffer is the pointer to the transmit data array holding
+* 			the Ethernet frame.
+* @param	PacketNumberOfBytes the length of the Ethernet frame in bytes
+* @return	SendStatus Number of raw bytes sent
+*
+* @note		The frame data sent must contain all data on an raw Ethernet frame
+* 			but must omit the Ethernet FCS and the CMAC will insert the FCS.
+*
+******************************************************************************/
+u32 XGMAC_SendEthernetPacket(UINTPTR BufferBaseAddress,UINTPTR RegisterBaseAddress,const u8 *PacketBuffer,const u32 PacketNumberOfBytes)
+{
+	u32 lVar;
+	u16 lSlotID;
+
+	for(unsigned int i=0;i<PacketNumberOfBytes;i++)
+	{
+		lVar = PacketBuffer[i];
+		lVar&=0x000000ff;
+		if(i== (PacketNumberOfBytes-1))
+		{
+			/** Set the TLAST bit for the last packet. **/
+			lVar|=0x00000100;
+		}
+
+		XGMAC_WriteReg(BufferBaseAddress,(i<<2),lVar);
+		lVar=XGMAC_ReadReg(BufferBaseAddress,(i<<2));
+	}
+
+	/** Get the current transmit slot. **/
+	lSlotID=XGMAC_GetTXSlotID(RegisterBaseAddress);
+	/** Set the current transmit slot. **/
+	XGMAC_TXSlotSet(RegisterBaseAddress);
+	/** Set the current transmit slot. **/
+	XGMAC_SetTXSlotID(RegisterBaseAddress,++lSlotID);
+	/** Return the number of bytes transmitted. **/
+	return PacketNumberOfBytes;
+}
 
 /** @} */
